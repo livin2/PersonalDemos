@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <cctype>
 using namespace std;
 struct Reserved
 {
@@ -18,13 +19,33 @@ struct Symbol
 	map<string, int> kind;
 	Symbol();
 };
+struct pos
+{
+	int x, l;
+	pos() {}
+	pos(int xx, int ll);
+};
+struct fileBuffer
+{
+	vector<string> src;
+	pos cur, pre,end;//pos line,x
+	static const char npos = -1;
+	fileBuffer(ifstream& in);
+	bool getNext(string& s,pos &p);
+	bool getNextDigit(string & s, pos & p);
+	bool getNextDecimal(string & s, pos & p);
+	char getCur();
+	bool reachEnd();
+	void skipBlank();
+	void NextCur();
+};
 struct LexiAnalyzer
 {
-	ifstream fin;
-	ofstream fout;
 	Symbol sym;
 	Reserved resev;
-	vector<string> fileBuffer;
+	ifstream fin;
+	ofstream fout;
+	fileBuffer buf;
 	LexiAnalyzer(string in, string out);
 	void run();
 };

@@ -1,6 +1,2 @@
-void   main()
-{
-	int  a, b;
-	a = 10;
-	b = a + 20;
-}
+void   main
+int  ab b1 1a
