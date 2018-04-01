@@ -1,150 +1,150 @@
 #include "LexiAnalyzer.h"
-Reserved::Reserved()
-{
-	for (int i = 0; i < 17; i++)
-		idx[ary[i]] = i;//0-index
-}
-const string Reserved::ary[17] = { "void","var","int","float","string","begin","end","if","then","else","while","do","call","read","write","and","or" };
-
-
-Symbol::Symbol()
-{
-	for (int i = ksta; i < ksta + 16; i++)
-		kind[ary[i]] = i;
-}
-const string Symbol::ary[16] = { "{","}","(",")",";","==","=","<","<=",">",">=","<>","+","-","*","/" };
-
 LexiAnalyzer::LexiAnalyzer(string in, string out)
-	:fin(ifstream(in)), fout(ofstream(out)),buf(fin)//按声明次序初始化
+	:fin(ifstream(in)), fout(ofstream(out)), buf(fin), outToF(false)//按声明次序初始化
 {
+	
 }
 
 void LexiAnalyzer::run()
 {
-
+	if (outToF)
+		fout << "kind-id," << setw(12) << "value," << setw(9) << "line&row" << endl;
+	else
+		cout << "kind-id," << setw(12) << "value," << setw(9) << "line&row" << endl;
+	while (unitAnaly())
+		;
 }
 
-fileBuffer::fileBuffer(ifstream & in)
-	:cur(0,0),pre(0,0)
+bool LexiAnalyzer::unitAnaly()
 {
-	string line;
-	while (getline(in, line))
-		src.push_back(line+"\n");
-	int ln = src.size()-1;
-	end = pos(ln,src[ln].size()-1);
-}
-
-bool fileBuffer::getNext(string &s,pos &p)
-{
-	if (reachEnd())
+	string str = "";
+	pos p(-1, -1);
+	buf.skipBlank();
+	char fir = buf.getCur();
+	if (fir == buf.npos)
 		return false;
-	skipBlank();
-	if (!isalpha(getCur()) && getCur()!='$')
-		return false;
-	string tmp="";
-	pre = cur;
-	int &li = cur.l;int &xi = cur.x;
-	for (; li < src.size(); li++)
+	if (isalpha(fir) || fir == '$')
 	{
-		for (; xi < src[li].size(); xi++)
+		if (buf.getNext(str, p))
 		{
-			if (isalpha(src[li][xi])||isdigit(src[li][xi]))
-				tmp += src[li][xi];
+			int idx = resev.search(str);
+			if (idx != -1)
+				output(str, p, 1, idx);
+			else if (IDfier.find(str) != IDfier.end())
+				output(str, p, 2, IDfier[str]);
 			else
 			{
-				s = tmp;
-				p = pos(pre.x, pre.l);
-				return true;
+				idx = IDfier.size() + 1;
+				IDfier[str] = idx;
+				output(str, p, 2, idx);
 			}
 		}
-		xi = 0;
+		else
+			throwError(str, p);
 	}
-	s = tmp; 
-	p = pos(pre.x, pre.l);
-	return true;
-}
-
-bool fileBuffer::getNextDigit(string &s, pos &p)
-{
-	if (reachEnd())
-		return false;
-	skipBlank();
-	if (!isdigit(getCur()))
-		return false;
-	string tmp = "";
-	pre = cur;
-	int &li = cur.l; int &xi = cur.x;
-	for (; li < src.size(); li++)
+	else if (isdigit(fir))
 	{
-		for (; xi < src[li].size(); xi++)
+		//buf.skipBlank();
+		if (buf.getNextDigit(str, p))
 		{
-			if (isdigit(src[li][xi]))
-				tmp += src[li][xi];
+			if (buf.getCur() == '.')
+			{
+				if(buf.getNextDecimal(str))
+					output(str, p, 4, 0);
+				else
+					throwError(str, p, "invaild decimal");
+			}else
+				output(str, p, 4, 0);
+		}
+		else
+			throwError(str, p, "invaild digit");
+	}
+	else if (fir == '\'')
+	{
+		if (buf.getNextChar(str, p))
+		{
+			if(Chars.find(str) != Chars.end())
+				output(str, p, 6, Chars[str]);
 			else
 			{
-				s = tmp;
-				p = pos(pre.x, pre.l);
-				return true;
+				int idx = Chars.size() + 1;
+				Chars[str] = idx;
+				output(str, p, 6, idx);
 			}
 		}
-		xi = 0;
+		else
+			throwError(str, p,"expect '");
 	}
-	s = tmp;
-	p = pos(pre.x, pre.l);
-	return true;
-}
-bool fileBuffer::getNextDecimal(string &s, pos &p)
-{
-	string s1;
-	if (!getNextDigit(s1, p))
-		return false;
-	if (getCur()!='.')
-		return false;
-	NextCur();
-	string s2; pos p2;
-	if (!getNextDigit(s2, p2))
-		return false;
-	s = s1 + "." + s2;
-	//p = p;
-	return true;
-}
-
-char fileBuffer::getCur()
-{
-	if (reachEnd())
-		return npos;
-	return src[cur.l][cur.x];
-}
-
-bool fileBuffer::reachEnd()
-{
-	if (cur.l > end.l || (cur.l == end.l&&cur.x >= end.x))
-		return true;
-	return false;
-}
-
-void fileBuffer::skipBlank()
-{
-	int &li = cur.l;
-	int &xi = cur.x;
-	for (; li < src.size(); li++)
+	else if (fir == '\"')
 	{
-		for (; xi < src[li].size(); xi++)
+		if (buf.getNextStr(str, p))
 		{
-			if (!isblank(src[li][xi])&& src[li][xi]!='\n')
-				return;
+			if (Strs.find(str) != Strs.end())
+				output(str, p, 5, Strs[str]);
+			else
+			{
+				int idx = Strs.size() + 1;
+				Strs[str] = idx;
+				output(str, p, 5, idx);
+			}
 		}
-		xi = 0;
+		else
+			throwError(str, p, "expect \"");
+	}
+	else if (fir == '/')
+	{
+		int idx = buf.npos;
+		if (buf.skipComments())
+			return true;
+		else if (buf.getNextSym(str, p,idx))
+			output(str, p, idx, 0);
+		else
+			throwError(str, p, "Error: expect CommentEnd");
+	}
+	else 
+	{
+		int idx = buf.npos;
+		if (buf.getNextSym(str, p, idx))
+			output(str, p, idx, 0);
+		else
+			throwError(str, p, "unknow Symbol");
+	}
+	return true;
+}
+
+void LexiAnalyzer::output(string & s, pos & p, int kind, int idx)
+{
+	if (outToF)
+	{
+		fout << "(" << setw(2) << kind << " ," << setw(2) << idx << ","
+			<< setw(10) << s << " ," << setw(3) << p.l << ","
+			<< setw(3) << p.x << ")" << endl;
+	}
+	else
+	{
+		cout << "(" << setw(2) << kind << " ," << setw(2) << idx << ","
+			<< setw(10) << s << " ," << setw(3) << p.l << ","
+			<< setw(3) << p.x << ")" << endl;
 	}
 }
 
-void fileBuffer::NextCur()
+void LexiAnalyzer::throwError(string & s, pos & p)
 {
-	cur.l++;
-	cur.x++;
+	//cerr <<"Error"<< "s" << " " << p.l << "," << p.x << endl;
+	if (outToF)
+		fout << "Error " << s << " " << p.l << "," << p.x << endl;
+	else
+		cout << "Error " << s << " " << p.l << "," << p.x << endl;
 }
 
-pos::pos(int xx, int ll)
-	:x(xx), l(ll)
+void LexiAnalyzer::throwError(string & s, pos & p, const string & msg)
 {
+	//cerr<<"Error msg: " << msg << endl;
+	throwError(s, p);
+	if (outToF)
+		fout << "Error msg: " << msg << endl;
+	else
+		cout << "Error msg: " << msg << endl;
 }
+
+

@@ -21,9 +21,18 @@
     <ClCompile Include="LexiAnalyzer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="fileBuffer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="others.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="text.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="out.txt">
       <Filter>资源文件</Filter>
     </Text>
   </ItemGroup>

@@ -4,14 +4,8 @@
 
 int main()
 {
-	//LexiAnalyzer exp("text.txt", "out.txt");
-	ifstream in("text.txt");
-	fileBuffer exp(in);
-	string s; pos p;
-	while (exp.getNext(s,p))
-	{
-		cout << s <<" "<<p.l<<" "<<p.x<< endl;
-	}
-	cout << endl;
+	LexiAnalyzer exp("text.txt", "out.txt");
+	exp.outToF = true;
+	exp.run();
 	return 0;
 }

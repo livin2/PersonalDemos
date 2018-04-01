@@ -115,10 +115,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="fileBuffer.cpp" />
     <ClCompile Include="LexiAnalyzer.cpp" />
+    <ClCompile Include="others.cpp" />
     <ClCompile Include="源.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="out.txt" />
     <Text Include="text.txt" />
   </ItemGroup>
   <ItemGroup>
