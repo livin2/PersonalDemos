@@ -1,16 +1,17 @@
 #include "LexiAnalyzer.h"
 Reserved::Reserved()
 {
-	for (int i = 0; i < 17; i++)
+	for (int i = 0; i < 10; i++)
 		idx[ary[i]] = i;//0-index
 }
-int Reserved::search(const string & str)
+int Reserved::search(string str)
 {
+	transform(str.begin(),str.end(), str.begin(), ::tolower);
 	if (idx.find(str) != idx.end())
 		return idx[str];
 	return -1;
 }
-const string Reserved::ary[17] = { "void","var","int","float","string","begin","end","if","then","else","while","do","call","read","write","and","or" };
+const string Reserved::ary[10] = { "procedure","def","if","else","while","call","begin","end","and","or" };
 
 
 int Symbol::search(const string & str)
@@ -22,10 +23,10 @@ int Symbol::search(const string & str)
 
 Symbol::Symbol()
 {
-	for (int i = 0; i <16; i++)
+	for (int i = 0; i <17; i++)
 		kind[ary[i]] = i+ ksta;
 }
-const string Symbol::ary[16] = { "{","}","(",")",";","==","=","<","<=",">",">=","<>","+","-","*","/" };
+const string Symbol::ary[17] = { "{","}","(",")",";","==","=","<","<=",">",">=","<>","+","-","*","/","," };
 
 pos::pos(int ll, int xx)
 	:x(xx), l(ll)

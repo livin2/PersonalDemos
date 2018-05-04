@@ -1,4 +1,4 @@
-void  20 20.2 int 
+void##  20 20.2 int 
 20.
 int
 20a

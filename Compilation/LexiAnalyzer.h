@@ -7,19 +7,20 @@
 #include <stack>
 #include <iostream>//
 #include <iomanip>
+#include <algorithm>
 using namespace std;
 struct Reserved
 {
 	static const int kind = 1;
-	static const string ary[17];
+	static const string ary[10];
 	map<string, int> idx;
 	Reserved();
-	int search(const string &str);
+	int search(string str);
 };
 struct Symbol
 {
 	static const int ksta = 7;
-	static const string ary[16];
+	static const string ary[17];
 	map<string, int> kind;
 	int search(const string &str);
 	Symbol();
@@ -42,9 +43,9 @@ struct fileBuffer
 	bool digEnd(char ch);
 	bool getNext(string& s, pos &p);
 	bool getNextDigit(string & s, pos & p);
-	bool getNextDecimal(string & s);
-	bool getNextChar(string & s, pos & p);
-	bool getNextStr(string & s, pos & p);
+	//bool getNextDecimal(string & s);
+	//bool getNextChar(string & s, pos & p);
+	//bool getNextStr(string & s, pos & p);
 	bool getNextSym(string & s, pos & p,int &idx);
 	bool skipComments();	// "/*asdsaf*/9"   true->cur在9 false-> cur在/ || 注释未封闭 
 	bool CommentEnd();		// "asdsaf*/9"   true->cur在9 false->cur在* 
@@ -66,6 +67,8 @@ struct LexiAnalyzer
 	LexiAnalyzer(string in, string out);
 	void run();
 	bool unitAnaly();
+	bool test();
+	
 	void output(string &s, pos &p, int kind, int idx);
 	void throwError(string &s, pos &p);
 	void throwError(string &s, pos &p,const string &msg);

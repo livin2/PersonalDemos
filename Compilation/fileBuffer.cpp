@@ -14,7 +14,7 @@ bool fileBuffer::getNext(string &s, pos &p)
 	if (reachEnd())
 		return false;
 	skipBlank();
-	if (!isalpha(getCur()) && getCur() != '$')
+	if (!isalpha(getCur()) && getCur() != '_')
 		return false;
 	string tmp = "";
 	pos pcur = cur;
@@ -24,7 +24,7 @@ bool fileBuffer::getNext(string &s, pos &p)
 	{
 		for (; xi < src[li].size(); xi++)
 		{
-			if (isalpha(src[li][xi]) || isdigit(src[li][xi]))
+			if (isalpha(src[li][xi]) || isdigit(src[li][xi])|| src[li][xi]=='_')
 				tmp += src[li][xi];
 			else
 			{
@@ -98,102 +98,7 @@ bool fileBuffer::getNextDigit(string &s, pos &p)
 //	//p = p;
 //	return true;
 //}
-bool fileBuffer::getNextDecimal(string &s)
-{
-	if (getCur() != '.')
-		return false;
-	NextCur();
-	if (digEnd(getCur()) && getCur() != '.')
-	{
-		s += ".";
-		return true;
-	}
-	else if (isdigit(getCur()))
-	{
-		string s2; pos p2;
-		if (!getNextDigit(s2, p2))
-			return false;
-		s = s + "." + s2;
-		//p = p;
-		return true;
-	}
-	else
-	{
-		string s2;
-		while (!digEnd(getCur()))
-		{
-			s2 += getCur();
-			NextCur();
-		}
-		s = s + "." + s2;
-		return false;
-	}
-}
-bool fileBuffer::getNextChar(string & s, pos & p)
-{
-	if (getCur() != '\'')
-		return false;
-	string tmp = "";
-	pos pcur = cur;
-	pre.push(pcur);
 
-	tmp += getCur();
-
-	NextCur();
-	tmp += getCur();
-	if (getCur() == '\'')
-	{
-		s = tmp;
-		return true;
-	}
-
-	NextCur();
-	if (getCur() != '\'')
-	{
-		s = tmp;
-		return false;
-	}
-	else
-	{
-		tmp += getCur();
-		NextCur();
-		s = tmp;
-		return true;
-	}
-}
-bool fileBuffer::getNextStr(string & s, pos & p)
-{
-	if (getCur() != '\"')
-		return false;
-	string tmp = "";
-	pos pcur = cur;
-	pre.push(pcur);
-
-	tmp += getCur();
-	NextCur();
-
-	int &li = cur.l; int &xi = cur.x;
-	for (; li < src.size(); li++)
-	{
-		for (; xi < src[li].size(); xi++)
-		{
-			if (src[li][xi] != '\"')
-				tmp += src[li][xi];
-			else
-			{
-				tmp += src[li][xi];
-				NextCur();
-				s = tmp;
-				p = pos(pcur.l, pcur.x);
-				return true;
-			}
-		}
-		xi = 0;
-	}
-	s = tmp;
-	p = pos(pcur.l, pcur.x);
-	return false;
-}
 bool fileBuffer::getNextSym(string & s, pos & p,int &idx)
 {
 	pos pcur = cur;
