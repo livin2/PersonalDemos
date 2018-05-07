@@ -1,6 +1,6 @@
 #include "LexiAnalyzer.h"
 fileBuffer::fileBuffer(ifstream & in)
-	:cur(0, 0)
+	:cur(0, 0), canContinue(true)
 {
 	string line;
 	while (getline(in, line))
@@ -73,6 +73,7 @@ bool fileBuffer::getNextDigit(string &s, pos &p)
 				}
 				s = tmp;
 				p = pos(pcur.l, pcur.x);
+				canContinue = false;//数字后面跟了未知字符
 				return false;
 			}
 		}
@@ -136,7 +137,7 @@ bool fileBuffer::skipComments()
 {
 	pos pcur = cur;
 	if (getCur() != '/')
-		return false;
+		return true; //no Comments to skip
 	NextCur();
 
 	if (getCur() == '/')
@@ -145,11 +146,10 @@ bool fileBuffer::skipComments()
 		cur.l++;
 		cur.x = 0;
 		return true;
-	}
-	if (getCur() != '*')
+	}else if (getCur() != '*')
 	{
 		retract();
-		return false;
+		return true; //no Comments to skip
 	}
 	NextCur();
 
@@ -164,7 +164,8 @@ bool fileBuffer::skipComments()
 		}
 		xi = 0;
 	}
-	//cerr << "Error: expect CommentEnd" << endl;
+	cerr << "Error: expect CommentEnd" << endl;
+	canContinue = false;
 	return false;
 }
 bool fileBuffer::CommentEnd()

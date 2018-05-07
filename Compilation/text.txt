@@ -1,6 +1,19 @@
-void##  20 20.2 int 
-20.
-int
-20a
-int
-20.a
+procedure abc
+begin
+def a,b,c;
+	a=1;
+	b=2;
+	c=999;
+
+	if(a+b<c)
+	begin
+		a=a+b;
+		b=b+a
+	end
+	else
+		c=1000;
+
+	while(c>500 or c<2000)
+		c= c-500;
+	b=3
+end.

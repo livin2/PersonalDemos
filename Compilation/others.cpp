@@ -23,10 +23,10 @@ int Symbol::search(const string & str)
 
 Symbol::Symbol()
 {
-	for (int i = 0; i <17; i++)
+	for (int i = 0; i <18; i++)
 		kind[ary[i]] = i+ ksta;
 }
-const string Symbol::ary[17] = { "{","}","(",")",";","==","=","<","<=",">",">=","<>","+","-","*","/","," };
+const string Symbol::ary[18] = { "{","}","(",")",";","=","==","<","<=",">",">=","<>","+","-","*","/","," ,"."};
 
 pos::pos(int ll, int xx)
 	:x(xx), l(ll)

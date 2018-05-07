@@ -118,6 +118,7 @@
     <ClCompile Include="fileBuffer.cpp" />
     <ClCompile Include="LexiAnalyzer.cpp" />
     <ClCompile Include="others.cpp" />
+    <ClCompile Include="SyntacAnalyzer.cpp" />
     <ClCompile Include="源.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LexiAnalyzer.h" />
+    <ClInclude Include="SyntacAnalyzer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

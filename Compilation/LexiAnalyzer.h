@@ -19,17 +19,30 @@ struct Reserved
 };
 struct Symbol
 {
-	static const int ksta = 7;
-	static const string ary[17];
+	static const int ksta = 4;
+	static const string ary[18];
 	map<string, int> kind;
 	int search(const string &str);
 	Symbol();
+	static const int relaSta = 10;
+	static const int relaEnd = 15;
 };
 struct pos
 {
 	int x, l;
 	pos() {}
 	pos(int xx, int ll);
+};
+struct Token
+{
+	string s; 
+	pos p; 
+	int kind,idx;
+	Token() {}
+	Token(string & s, pos & p, int kind, int idx)
+		:s(s), p(p), kind(kind), idx(idx) {}
+	void set(string & ss, pos & pp, int kkind, int iidx);
+	void output();
 };
 struct fileBuffer
 {
@@ -38,6 +51,7 @@ struct fileBuffer
 	pos cur, end;//pos line,x
 	stack<pos> pre;
 	static const char npos = -1;
+	bool canContinue; //×¢ÊÍÎ´·â±Õ ·Ç·¨·ûºÅ
 	fileBuffer(ifstream& in);
 	bool reachEnd();
 	bool digEnd(char ch);
@@ -64,7 +78,12 @@ struct LexiAnalyzer
 	map<string, int> Chars;
 	map<string, int> Strs;
 	bool outToF;
+	bool canContinue;
 	LexiAnalyzer(string in, string out);
+	bool NextReserved(Token &res);	//1
+	bool NextId(Token &res);		//2
+	bool NextDig(Token &res);		//3
+	bool NextSym(Token &res);
 	void run();
 	bool unitAnaly();
 	bool test();

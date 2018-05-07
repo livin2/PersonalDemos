@@ -27,6 +27,9 @@
     <ClCompile Include="others.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SyntacAnalyzer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="text.txt">
@@ -38,6 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LexiAnalyzer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SyntacAnalyzer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
