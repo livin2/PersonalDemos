@@ -135,47 +135,47 @@ bool SyntacAnalyzer::defStatement()
 		return false;
 	}
 
-	//没分号
-	while(LeA.NextSym(tmp))
-	{
-		if (tmp.s != ",")
-		{
-			LeA.buf.retract(); // re sym
-			return true;
-		}
-		if (!LeA.NextId(tmp))
-		{
-			throwError("expect id", tmp.p);
-			return false;
-		}
-	}
-	return true;
-
-	////有分号
-	//while (LeA.NextSym(tmp))
+	////没分号
+	//while(LeA.NextSym(tmp))
 	//{
 	//	if (tmp.s != ",")
 	//	{
-	//		if (tmp.s == ";")
-	//			return true;
-	//		else
-	//		{
-	//			throwError("expect ;", tmp.p);
-	//			//LeA.buf.retract(); // re sym
-	//			//LeA.buf.retract(); // re def
-	//			return false;
-	//		}
+	//		LeA.buf.retract(); // re sym
+	//		return true;
 	//	}
 	//	if (!LeA.NextId(tmp))
 	//	{
 	//		throwError("expect id", tmp.p);
-	//		//LeA.buf.retract(); // re sym
-	//		//LeA.buf.retract(); // re def
 	//		return false;
 	//	}
 	//}
-	//throwError("expect ;", tmp.p);
-	//return false;
+	//return true;
+
+	//有分号
+	while (LeA.NextSym(tmp))
+	{
+		if (tmp.s != ",")
+		{
+			if (tmp.s == ";")
+				return true;
+			else
+			{
+				throwError("expect ;", tmp.p);
+				//LeA.buf.retract(); // re sym
+				//LeA.buf.retract(); // re def
+				return false;
+			}
+		}
+		if (!LeA.NextId(tmp))
+		{
+			throwError("expect id", tmp.p);
+			//LeA.buf.retract(); // re sym
+			//LeA.buf.retract(); // re def
+			return false;
+		}
+	}
+	throwError("expect ;", tmp.p);
+	return false;
 }
 
 bool SyntacAnalyzer::assignStatement()

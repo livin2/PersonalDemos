@@ -1,6 +1,6 @@
 procedure abc
 begin
-def a,b,c;
+def a,b,c;;;
 	a=1;
 	b=2;
 	c=999;
@@ -16,4 +16,3 @@ def a,b,c;
 	while(c>500 or c<2000)
 		c= c-500;
 	b=3
-end.
