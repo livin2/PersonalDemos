@@ -14,5 +14,8 @@ def a,b,c;;;
 		c=1000;
 
 	while(c>500 or c<2000)
-		c= c-500;
-	b=3
+		if(a+b<c)
+			while(d>500 and d<2000)
+				b=3;
+	b=5
+end.
