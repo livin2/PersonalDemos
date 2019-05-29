@@ -3,12 +3,18 @@ package com.dhu777.picm.data.local;
 import androidx.annotation.NonNull;
 
 import com.dhu777.picm.data.PicDataSource;
+import com.dhu777.picm.data.entity.UserToken;
 
 public class PicLocalRepo implements PicDataSource {
+    @Override
+    public void fetchUserList(@NonNull UserToken userToken, @NonNull FetchPicsCallback callback) {
+
+    }
+
     //TODO
     @Override
     public void fetchPicList(@NonNull FetchPicsCallback callback) {
-
+        //pass
     }
 
     @Override
@@ -16,8 +22,5 @@ public class PicLocalRepo implements PicDataSource {
 
     }
 
-    @Override
-    public void refresh() {
 
-    }
 }

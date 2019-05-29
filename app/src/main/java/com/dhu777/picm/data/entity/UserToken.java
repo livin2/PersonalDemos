@@ -9,6 +9,7 @@ public class UserToken {
     private int id;
     private String name;
     private String Token;
+    private Long dueTime;
 
     public int getId() {
         return id;
@@ -32,5 +33,13 @@ public class UserToken {
 
     public void setToken(String token) {
         Token = token;
+    }
+
+    public Long getDueTime() {
+        return dueTime;
+    }
+
+    public void setDueTime(Long dueTime) {
+        this.dueTime = dueTime;
     }
 }

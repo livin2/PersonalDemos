@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/dialog_padding">
+
+    <TextView
+        android:id="@+id/text_info_date"
+        android:layout_margin="@dimen/dialog_item_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_info_preffix_date"/>
+
+    <TextView
+        android:id="@+id/text_info_username"
+        android:layout_margin="@dimen/dialog_item_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_info_preffix_username"/>
+
+    <TextView
+        android:id="@+id/text_info_size"
+        android:layout_margin="@dimen/dialog_item_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_info_preffix_size"/>
+
+    <TextView
+        android:id="@+id/text_info_width"
+        android:layout_margin="@dimen/dialog_item_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_info_preffix_width"/>
+
+    <TextView
+        android:id="@+id/text_info_height"
+        android:layout_margin="@dimen/dialog_item_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_info_preffix_height"/>
+
+</LinearLayout>

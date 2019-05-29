@@ -8,10 +8,12 @@ public interface PicListContract {
         void showPictures();
         void setProgressIndicator(boolean active);
         void showLoadingPicturesError();
+        void setLayoutSpanCount(int count);
+        void refreshLayout();
     }
 
     interface Presenter extends BasePresenter {
         void openPictureDetails();
-
+        void refreshPicList();
     }
 }
