@@ -16,6 +16,7 @@ import com.dhu777.picm.data.remote.PicRemoteRepo;
 import static com.dhu777.picm.util.ComUtil.getContext;
 
 import com.dhu777.picm.data.remote.PicUpload;
+import com.dhu777.picm.piclist.PicListPresenter;
 import com.google.common.io.ByteStreams;
 
 import java.io.FileNotFoundException;
@@ -25,9 +26,15 @@ import java.io.InputStream;
 public class HomePresenter implements PicUpload.UpPicCallback{
     private LoginDataSource mLoginRepo;
     private static final String TAG = "HomePresenter";
+    private PicListPresenter picPresenter;
 
     public HomePresenter(LoginDataSource mLoginRepo) {
         this.mLoginRepo = mLoginRepo;
+    }
+
+    public HomePresenter(LoginDataSource mLoginRepo, PicListPresenter picPresenter) {
+        this.mLoginRepo = mLoginRepo;
+        this.picPresenter = picPresenter;
     }
 
     public void upload(@NonNull final Uri picUri){
@@ -73,11 +80,14 @@ public class HomePresenter implements PicUpload.UpPicCallback{
             Log.d(TAG, "onPicUploaded: "+response.getMsg());
         Toast.makeText(getContext(),
                 R.string.msg_suc_upload,Toast.LENGTH_SHORT).show();
+        picPresenter.refreshList();
     }
 
     @Override
     public void onUploadFail(@NonNull Throwable t) {
         Toast.makeText(getContext(),
                 t.getMessage(),Toast.LENGTH_SHORT).show();
+        picPresenter.refreshList();
     }
+
 }

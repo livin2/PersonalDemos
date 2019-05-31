@@ -2,6 +2,7 @@ package com.dhu777.picm.home;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.dhu777.picm.MainActivity;
@@ -23,6 +24,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 
 import android.view.Menu;
 import android.widget.Toast;
@@ -63,7 +65,24 @@ public class HomeActivity extends AppCompatActivity
         }
 
         mPicPresenter = new PicListPresenter(Injection.providePicInfoRepositrory(),picLFragment);
-        mHomePresenter = new HomePresenter(Injection.provideLoginRepositrory(getApplicationContext()));
+        mHomePresenter = new HomePresenter(Injection.provideLoginRepositrory(getApplicationContext()),
+                mPicPresenter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences preferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        int preMode = Injection.mode;
+        Injection.mode = preferences.getBoolean("mock",true)?
+                Injection.MOKE:Injection.REAL;
+
+        if(preMode!=Injection.mode){
+            //providePicInfoRepositrory根据mode标志注入 所以要放在mode标志变更后
+            mPicPresenter.changeRepo(Injection.providePicInfoRepositrory());
+            mPicPresenter.refreshList();
+        }
     }
 
     @Override
@@ -104,15 +123,26 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            picLFragment.refreshLayout();
+        switch (id){
+            case R.id.home_refresh:
+                mPicPresenter.refreshList();
+                return true;
+            case R.id.home_span_1:return setSpan(item,1);
+            case R.id.home_span_2:return setSpan(item,2);
+            case R.id.home_span_3:return setSpan(item,3);
+            case R.id.home_span_4:return setSpan(item,4);
+            default:return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private boolean setSpan(MenuItem item,int spancount){
+        if (item.isChecked())
             return true;
-        }else if(id == R.id.action_spanc3){
-            picLFragment.setLayoutSpanCount(3);
+        else{
+            picLFragment.setLayoutSpanCount(spancount);
+            item.setChecked(true);
             return true;
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -128,6 +158,9 @@ public class HomeActivity extends AppCompatActivity
         }
         else if (id == R.id.nav_test){
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+        }else if(id == R.id.nav_setting){
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(intent);
         }
 

@@ -1,5 +1,7 @@
 package com.dhu777.picm.piclist;
 
+import androidx.annotation.NonNull;
+
 import com.dhu777.picm.BasePresenter;
 import com.dhu777.picm.BaseView;
 
@@ -9,11 +11,10 @@ public interface PicListContract {
         void setProgressIndicator(boolean active);
         void showLoadingPicturesError();
         void setLayoutSpanCount(int count);
-        void refreshLayout();
     }
 
     interface Presenter extends BasePresenter {
-        void openPictureDetails();
-        void refreshPicList();
+        void refreshList();
+        void changeRepo(@NonNull PicInfoRepositrory Repo);
     }
 }

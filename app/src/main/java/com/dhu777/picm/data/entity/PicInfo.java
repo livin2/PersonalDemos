@@ -46,16 +46,16 @@ public class PicInfo {
 
     public void setPicURL(String picURL) { this.picURL = picURL; }
     public String getPicURL() {
-        if (Injection.MODE == Injection.REAL){
-            return PicRemoteContract.URL_BASE+"pic/"+picId;
+        if (Injection.mode == Injection.REAL){
+            return Injection.provideRemoteUnivesalURL()+"pic/"+picId;
         }else{
             return this.picURL;
         }
     }
 
     public String getThumbURL() {
-        if (Injection.MODE == Injection.REAL){
-            return PicRemoteContract.URL_BASE+"thumbnail/"+picId;
+        if (Injection.mode == Injection.REAL){
+            return Injection.provideRemoteUnivesalURL()+"thumbnail/"+picId;
         }else{
             return this.picURL;
         }

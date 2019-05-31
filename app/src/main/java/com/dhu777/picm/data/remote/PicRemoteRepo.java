@@ -7,62 +7,44 @@ import androidx.annotation.NonNull;
 import com.dhu777.picm.data.PicDataSource;
 import com.dhu777.picm.data.entity.BaseResponse;
 import com.dhu777.picm.data.entity.PicInfo;
-import com.dhu777.picm.data.entity.UserToken;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.dhu777.picm.mock.Injection;
 
-import java.io.File;
 import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-//import com.dhu777.picm.data.remote.PicRemoteContract.PicList;
 
 import static com.dhu777.picm.data.remote.PicRemoteContract.getApiService;
 import static com.dhu777.picm.util.ComUtil.checkNotNull;
 
 public class PicRemoteRepo implements PicDataSource,PicUpload{
     private static PicRemoteRepo INSTANCE;
-
     private static PicRemoteContract.Api apiService;
+    private static PicRemoteContract.Api realApi;
+    private static PicRemoteContract.Api mockApi;
 
-    private PicRemoteRepo(){};
+    protected PicRemoteRepo(){};
     public static PicRemoteRepo getInstance(){
         if(INSTANCE == null){
             INSTANCE = new PicRemoteRepo();
-            apiService = getApiService(PicRemoteContract.Api.class);
+        }
+        if(Injection.mode==Injection.MOKE){
+            if(mockApi == null){
+                mockApi = getApiService(PicRemoteContract.Api.class,Injection.MockURL);
+            }
+            apiService = mockApi;
+        }
+        if(Injection.mode==Injection.REAL){
+            if(realApi == null){
+                realApi = getApiService(PicRemoteContract.Api.class,Injection.RealURL);
+            }
+            apiService = realApi;
         }
         return INSTANCE;
-    }
-
-
-    @Override
-    public void fetchUserList(@NonNull UserToken userToken,
-                              @NonNull final FetchPicsCallback callback) {
-        Call<List<PicInfo>> call = apiService.getUserPicList(checkNotNull(userToken.getName()),
-                checkNotNull(userToken.getToken()));
-        call.enqueue(new Callback<List<PicInfo>>() {
-            @Override
-            public void onResponse(Call<List<PicInfo>> call, Response<List<PicInfo>> response) {
-                List<PicInfo> pics = checkNotNull(response.body());
-                callback.onDataLoaded(pics);
-            }
-
-            @Override
-            public void onFailure(Call<List<PicInfo>> call, Throwable t) {
-                Log.d("PicRemoteRepo", "onFailure:fetchUserList failed");
-                t.printStackTrace(); //TODO
-            }
-        });
     }
 
     @Override
@@ -82,8 +64,12 @@ public class PicRemoteRepo implements PicDataSource,PicUpload{
 
             @Override
             public void onFailure(Call<List<PicInfo>> call, Throwable t) {
-                Log.d("PicRemoteRepo", "onFailure: failed");
+                Log.d("PicRemoteRepo", "onFailure: failed"+t.getCause());
+                Exception e = new Exception(t.getMessage());
                 t.printStackTrace(); //TODO
+                e.printStackTrace();
+                callback.onDataNotAvailable(e);
+
             }
         });
     }
@@ -113,9 +99,15 @@ public class PicRemoteRepo implements PicDataSource,PicUpload{
             @Override
             public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
                 Log.d("PicRemoteRepo", "onFailure:"+t.getMessage());
+                t.printStackTrace();
                 if (callback!=null)
                     callback.onUploadFail(t);
             }
         });
+    }
+
+    //call when exchange mock mode
+    @Override
+    public void refresh() {
     }
 }

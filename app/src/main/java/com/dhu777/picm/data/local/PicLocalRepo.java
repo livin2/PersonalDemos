@@ -6,8 +6,9 @@ import com.dhu777.picm.data.PicDataSource;
 import com.dhu777.picm.data.entity.UserToken;
 
 public class PicLocalRepo implements PicDataSource {
+
     @Override
-    public void fetchUserList(@NonNull UserToken userToken, @NonNull FetchPicsCallback callback) {
+    public void refresh() {
 
     }
 

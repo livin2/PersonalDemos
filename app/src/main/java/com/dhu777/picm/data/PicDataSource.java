@@ -21,7 +21,7 @@ public interface PicDataSource {
         void onDataNotAvailable(@NonNull Exception e);
     }
 
-    void fetchUserList(@NonNull UserToken userToken,@NonNull FetchPicsCallback callback);
+    void refresh();
     void fetchPicList(@NonNull FetchPicsCallback callback);
     void getPic(@NonNull String picId,@NonNull GetPicCallback callback);
 }

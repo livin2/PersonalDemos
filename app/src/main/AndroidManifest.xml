@@ -12,13 +12,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".piclist.PicTestActivity"></activity>
+        <activity
+            android:name=".home.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".home.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dhu777.picm.home.HomeActivity" />
+        </activity>
+        <activity android:name=".piclist.PicUserActivity" />
         <activity
             android:name=".home.HomeActivity"
             android:label="@string/title_activity_pic_list"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -26,8 +35,7 @@
         <activity android:name=".login.LoginActivity" />
         <activity
             android:name=".picdetail.PicDetailActivity"
-            android:theme="@style/AppTheme.Fullscreen"/>
+            android:theme="@style/AppTheme.Fullscreen" />
     </application>
-
 
 </manifest>
