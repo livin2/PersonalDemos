@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">HCIdemo</string>
+    <string name="title_activity_settings">设置</string>
+    <string name="str_setting">设置</string>
+</resources>

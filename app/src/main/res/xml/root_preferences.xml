@@ -1,0 +1,79 @@
+<!--
+  ~ Copyright 2018 The app Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="方向控制语音关键词">
+        <EditTextPreference
+            app:key="move_up"
+            app:title="向上移动"
+            app:defaultValue="上"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:key="move_down"
+            app:title="向下移动"
+            app:defaultValue="下"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:key="move_left"
+            app:title="向左移动"
+            app:defaultValue="左"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:key="move_right"
+            app:title="向右移动"
+            app:defaultValue="右"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="音量控制语音关键词">
+        <EditTextPreference
+            app:key="vol_up"
+            app:title="增大音量"
+            app:defaultValue="大"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:key="vol_down"
+            app:title="减小音量"
+            app:defaultValue="小"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="场景定位语音关键词">
+        <EditTextPreference
+            app:key="jump_gate"
+            app:title="移动至城门"
+            app:defaultValue="城门"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:key="jump_bridge"
+            app:title="移动至桥"
+            app:defaultValue="桥"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+</androidx.preference.PreferenceScreen>
