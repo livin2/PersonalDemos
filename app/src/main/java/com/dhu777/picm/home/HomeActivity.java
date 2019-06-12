@@ -1,18 +1,25 @@
 package com.dhu777.picm.home;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.dhu777.picm.MainActivity;
 import com.dhu777.picm.R;
+import com.dhu777.picm.data.LoginDataSource;
+import com.dhu777.picm.data.entity.UserToken;
+import com.dhu777.picm.login.LoginActivity;
 import com.dhu777.picm.mock.Injection;
+import com.dhu777.picm.piclist.PicListContract;
 import com.dhu777.picm.piclist.PicListFragment;
 import com.dhu777.picm.piclist.PicListPresenter;
+import com.dhu777.picm.piclist.PicUserActivity;
 import com.dhu777.picm.util.ComUtil;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 
@@ -25,17 +32,24 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.Menu;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
     public static final int REQUEST_PICK_PIC = 1;
 
     private DrawerLayout mDrawerLayout;
     private PicListPresenter mPicPresenter;
     private HomePresenter mHomePresenter;
+    private SwipeRefreshLayout swipeRefresh;
+    private View headerView;
 
     private PicListFragment picLFragment;
     @Override
@@ -49,8 +63,17 @@ public class HomeActivity extends AppCompatActivity
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
+        headerView = navigationView.getHeaderView(0);
+        headerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginToggle();
+            }
+        });
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, mDrawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -64,9 +87,52 @@ public class HomeActivity extends AppCompatActivity
             ComUtil.addFragmentToActivity(getSupportFragmentManager(),picLFragment,R.id.contentFrame);
         }
 
+        swipeRefresh = findViewById(R.id.home_swipe_refresh);
+        swipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
+        swipeRefresh.setOnRefreshListener(this);
+
         mPicPresenter = new PicListPresenter(Injection.providePicInfoRepositrory(),picLFragment);
         mHomePresenter = new HomePresenter(Injection.provideLoginRepositrory(getApplicationContext()),
                 mPicPresenter);
+
+        mHomePresenter.getLoginRepo().getToken(new LoginDataSource.LoginCallback() {
+            @Override
+            public void onSuccess(UserToken Token) {
+                try {
+                    TextView unameV = headerView.findViewById(R.id.nav_header_text);
+                    unameV.setText(Token.getName());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFail(Throwable e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void loginToggle(){
+        if (!mHomePresenter.getLoginRepo().isLoggedIn()){
+            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }else {
+            new AlertDialog.Builder(this)
+                    .setTitle("提示")
+                    .setMessage("是否注销当前用户?")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            mHomePresenter.getLoginRepo().logout();
+                            TextView unameV = headerView.findViewById(R.id.nav_header_text);
+                            unameV.setText(R.string.nav_header_title);
+                            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("取消", null)
+                    .show();
+        }
     }
 
     @Override
@@ -75,12 +141,13 @@ public class HomeActivity extends AppCompatActivity
         SharedPreferences preferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
         int preMode = Injection.mode;
-        Injection.mode = preferences.getBoolean("mock",true)?
+        Injection.mode = preferences.getBoolean("mock",false)?
                 Injection.MOKE:Injection.REAL;
+
+        mPicPresenter.changeRepo(Injection.providePicInfoRepositrory());
 
         if(preMode!=Injection.mode){
             //providePicInfoRepositrory根据mode标志注入 所以要放在mode标志变更后
-            mPicPresenter.changeRepo(Injection.providePicInfoRepositrory());
             mPicPresenter.refreshList();
         }
     }
@@ -124,9 +191,6 @@ public class HomeActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         switch (id){
-            case R.id.home_refresh:
-                mPicPresenter.refreshList();
-                return true;
             case R.id.home_span_1:return setSpan(item,1);
             case R.id.home_span_2:return setSpan(item,2);
             case R.id.home_span_3:return setSpan(item,3);
@@ -162,8 +226,15 @@ public class HomeActivity extends AppCompatActivity
         }else if(id == R.id.nav_setting){
             Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(intent);
+        }else if(id==R.id.nav_gallery){
+            if(mHomePresenter.getLoginRepo().isLoggedIn()){
+                Intent intent = new Intent(getApplicationContext(), PicUserActivity.class);
+                startActivity(intent);
+            }else {
+                Toast.makeText(getApplicationContext(),"请登录",Toast.LENGTH_SHORT).show();
+                loginToggle();
+            }
         }
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -173,5 +244,15 @@ public class HomeActivity extends AppCompatActivity
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent, REQUEST_PICK_PIC);
+    }
+
+    @Override
+    public void onRefresh() {
+        mPicPresenter.refreshList(new PicListContract.RefreshCallBack() {
+            @Override
+            public void onFinsh() {
+                swipeRefresh.setRefreshing(false);
+            }
+        });
     }
 }

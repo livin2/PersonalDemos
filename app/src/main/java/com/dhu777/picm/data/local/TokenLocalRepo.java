@@ -29,10 +29,9 @@ public class TokenLocalRepo implements LoginDataSource.TokenDataSource {
     private TokenLocalRepo() {
     }
 
-
     @Override
     public void getToken(@NonNull LoginDataSource.LoginCallback callback) {
-        new getAsyn(checkNotNull(callback)).execute();
+        new getAsyn(callback).execute();
     }
 
     @Override
@@ -84,7 +83,7 @@ public class TokenLocalRepo implements LoginDataSource.TokenDataSource {
         private Exception exp = null;
 
         public getAsyn(@NonNull LoginDataSource.LoginCallback callback) {
-            this.callback = checkNotNull(callback);
+            this.callback = callback;
         }
 
         @Override
@@ -102,13 +101,17 @@ public class TokenLocalRepo implements LoginDataSource.TokenDataSource {
 
         @Override
         protected void onPostExecute(Integer res) {
-            switch (res) {
-                case TYPE_SUCCESS:
-                    callback.onSuccess(checkNotNull(utk));
-                    return;
-                case TYPE_FAiLED:
-                    callback.onFail(checkNotNull(exp));
-                    return;
+            try {
+                switch (res) {
+                    case TYPE_SUCCESS:
+                        callback.onSuccess(checkNotNull(utk));
+                        return;
+                    case TYPE_FAiLED:
+                        callback.onFail(checkNotNull(exp));
+                        return;
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
             }
 
         }

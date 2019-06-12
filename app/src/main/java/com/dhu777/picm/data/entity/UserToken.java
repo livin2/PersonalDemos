@@ -1,5 +1,6 @@
 package com.dhu777.picm.data.entity;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -41,5 +42,13 @@ public class UserToken {
 
     public void setDueTime(Long dueTime) {
         this.dueTime = dueTime;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(obj instanceof UserToken){
+            return id == ((UserToken) obj).getId();
+        }
+        return super.equals(obj);
     }
 }

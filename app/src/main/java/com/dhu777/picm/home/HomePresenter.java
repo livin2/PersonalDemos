@@ -37,6 +37,10 @@ public class HomePresenter implements PicUpload.UpPicCallback{
         this.picPresenter = picPresenter;
     }
 
+    public LoginDataSource  getLoginRepo(){
+        return mLoginRepo;
+    }
+
     public void upload(@NonNull final Uri picUri){
         final String name =  picUri.getLastPathSegment();
         String mimeType = getContext().getContentResolver().getType(picUri);
@@ -89,5 +93,4 @@ public class HomePresenter implements PicUpload.UpPicCallback{
                 t.getMessage(),Toast.LENGTH_SHORT).show();
         picPresenter.refreshList();
     }
-
 }

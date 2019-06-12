@@ -4,10 +4,13 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +18,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.dhu777.picm.R;
 import com.dhu777.picm.data.entity.PicInfo;
+import com.dhu777.picm.util.ComUtil;
 
 import java.text.DateFormat;
 import java.util.Date;

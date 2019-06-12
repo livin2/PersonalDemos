@@ -1,13 +1,25 @@
 package com.dhu777.picm.data;
 
-public interface LoginDataSource <T>{
+import android.telecom.Call;
+
+import com.dhu777.picm.data.entity.UserToken;
+
+public interface LoginDataSource{
     boolean isLoggedIn();
     void logout();
-    T login(String username, String password);
+    void login(String username, String password,LoginCallback loginCallback);
+    void signUp(String username, String password,LoginCallback loginCallback);
+    void getToken(LoginCallback callback);
+
+    interface LoginCallback{
+        void onSuccess(UserToken Token);
+        void onFail(Throwable e);
+    }
 
     interface TokenDataSource{
-        String getToken();
-        void saveToken(String name,String token);
+        void getToken(LoginCallback callback);
+        void saveToken(UserToken Token);
         void delToken();
     }
+
 }

@@ -3,6 +3,7 @@ package com.dhu777.picm.data.remote;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.dhu777.picm.data.LoginDataSource;
 import com.dhu777.picm.data.LoginRepositrory;
@@ -55,6 +56,7 @@ public class PicUserRemoteRepo implements PicDataSource{
 
     @Override
     public void fetchPicList(@NonNull final FetchPicsCallback callback) {
+        Log.d("PicUserRemoteRepo", "fetchPicList");
         Call<List<PicInfo>> call = apiService.getUserPicList(checkNotNull(userToken.getName()),
                 checkNotNull(userToken.getToken()));
         call.enqueue(new Callback<List<PicInfo>>() {
@@ -75,5 +77,10 @@ public class PicUserRemoteRepo implements PicDataSource{
     @Override
     public void getPic(@NonNull String picId, @NonNull GetPicCallback callback) {
         //todo
+    }
+
+    @Override
+    public void deletePic(@NonNull String picId, @NonNull String jwt, @Nullable DelPicCallback callback) {
+
     }
 }

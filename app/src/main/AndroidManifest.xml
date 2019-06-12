@@ -3,6 +3,7 @@
     package="com.dhu777.picm">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".util.ComUtil"
@@ -20,14 +21,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.dhu777.picm.home.HomeActivity" />
         </activity>
-        <activity android:name=".piclist.PicUserActivity" />
+        <activity
+            android:name=".piclist.PicUserActivity"
+            android:parentActivityName=".home.HomeActivity"/>
         <activity
             android:name=".home.HomeActivity"
-            android:label="@string/title_activity_pic_list"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -36,6 +38,17 @@
         <activity
             android:name=".picdetail.PicDetailActivity"
             android:theme="@style/AppTheme.Fullscreen" />
+
+        <provider
+            android:name=".util.GenericFileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
+
 
 </manifest>

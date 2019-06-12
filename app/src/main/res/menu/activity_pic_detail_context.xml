@@ -2,15 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/picdetail_menu_info"
-        android:title="info"
+        android:title="@string/menu_info"
         app:showAsAction="ifRoom"/>
-    <item android:id="@+id/help"
-        android:title="help" >
-        <menu>
-            <item android:id="@+id/create_new"
-                android:title="create_new" />
-            <item android:id="@+id/open"
-                android:title="open" />
-        </menu>
-    </item>
+    <item android:id="@+id/picdetail_menu_savepic"
+        android:title="@string/menu_savepic"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/picdetail_menu_sharepic"
+        android:title="@string/menu_sharepic"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/picdetail_menu_editpic"
+        android:title="@string/menu_editpic"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/picdetail_menu_copyurl"
+        android:title="@string/menu_copyurl"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/picdetail_menu_delete"
+        android:visible="false"
+        android:enabled="false"
+        android:title="@string/menu_delpic"
+        app:showAsAction="ifRoom"/>
 </menu>

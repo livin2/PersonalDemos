@@ -1,5 +1,7 @@
 package com.dhu777.picm.data.remote;
 
+import androidx.room.Delete;
+
 import com.dhu777.picm.data.entity.BaseResponse;
 import com.dhu777.picm.data.entity.PicInfo;
 import com.dhu777.picm.mock.Injection;
@@ -12,10 +14,13 @@ import okhttp3.Callback;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -54,6 +59,9 @@ public class PicRemoteContract {
         @Multipart
         @POST("upload")
         Call<BaseResponse<String>> uploadSinglePic(@Part MultipartBody.Part multipart, @Header("jwtToken")String jwt);
+
+        @DELETE("pic/{userId}")
+        Call<ResponseBody> deledeSinglePic(@Path("userId") String userid, @Header("jwtToken")String jwt);
     }
 
     /**

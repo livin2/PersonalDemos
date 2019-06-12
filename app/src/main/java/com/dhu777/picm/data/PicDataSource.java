@@ -1,6 +1,7 @@
 package com.dhu777.picm.data;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.dhu777.picm.data.entity.BaseResponse;
 import com.dhu777.picm.data.entity.PicInfo;
@@ -21,7 +22,13 @@ public interface PicDataSource {
         void onDataNotAvailable(@NonNull Exception e);
     }
 
+    interface DelPicCallback{
+        void onDataLoaded(@Nullable BaseResponse msg);
+        void onDataNotAvailable(@NonNull Throwable t);
+    }
+
     void refresh();
     void fetchPicList(@NonNull FetchPicsCallback callback);
     void getPic(@NonNull String picId,@NonNull GetPicCallback callback);
+    void deletePic(@NonNull String picId,@NonNull String jwt, @Nullable DelPicCallback callback);
 }
