@@ -118,7 +118,10 @@ public class Main2Activity extends AppCompatActivity implements EventListener,Su
         myRecognizer = new MyRecognizer(this, this);
     }
 
-    protected void setKeyWord(){
+    /**
+     * 读取设置的关键词
+     */
+    public void setKeyWord(){
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
         moveFlagUP = sharedPreferences.getString("move_up",moveFlagUP);
@@ -131,6 +134,11 @@ public class Main2Activity extends AppCompatActivity implements EventListener,Su
         jumpFlagBridge = sharedPreferences.getString("jump_bridge",jumpFlagBridge);
     }
 
+    /**
+     * 在缩放比例变化时执行
+     * @param newScale 新的缩放比例
+     * @param origin 操作事件来源
+     */
     @Override
     public void onScaleChanged(float newScale, int origin) {
         Float newVolF = (volMax-volMin)*((newScale-1f)/1.5f) +volMin;
@@ -139,6 +147,10 @@ public class Main2Activity extends AppCompatActivity implements EventListener,Su
                 , AudioManager.FLAG_PLAY_SOUND);
     }
 
+    /**
+     * @param newCenter 新的视点中心
+     * @param origin
+     */
     @Override
     public void onCenterChanged(PointF newCenter, int origin) {
         mLocator.locateVoice(newCenter);
@@ -211,10 +223,10 @@ public class Main2Activity extends AppCompatActivity implements EventListener,Su
             }
         }
 
-        if(name.equals(SpeechConstant.CALLBACK_EVENT_ASR_ERROR)||name.equals(SpeechConstant.CALLBACK_EVENT_ASR_EXIT)){
-            stop();
-            Toast.makeText(getApplicationContext(),"识别失败",Toast.LENGTH_SHORT).show();
-        }
+//        if(name.equals(SpeechConstant.CALLBACK_EVENT_ASR_ERROR)||name.equals(SpeechConstant.CALLBACK_EVENT_ASR_EXIT)){
+//            stop();
+//            Toast.makeText(getApplicationContext(),"识别失败",Toast.LENGTH_SHORT).show();
+//        }
         Log.i("onEvent", logTxt);
     }
 

@@ -4,6 +4,9 @@ import android.content.Context;
 import android.media.MediaPlayer;
 
 
+/**
+ * 持有一系列背景音MediaPlay对象
+ */
 @SuppressWarnings({"WeakerAccess", "CanBeFinal"})
 public class Players {
     private MediaPlayer currentPlayer;
@@ -40,6 +43,9 @@ public class Players {
         market0p.setLooping(true);
     }
 
+    /**
+     * @param id 根据不同id进行播放，id见本类public static 字段
+     */
     public void play(int id){
         switch (id){
             case WATER1:
@@ -60,18 +66,27 @@ public class Players {
         }
     }
 
+    /**
+     * 继续播放
+     */
     public void play(){
         if(currentPlayer!=null){
             currentPlayer.start();
         }
     }
 
+    /**
+     * 暂停播放
+     */
     public void pause(){
         if(isPlaying()){
             currentPlayer.pause();
         }
     }
 
+    /**
+     * @return 当前是否在播放
+     */
     public Boolean isPlaying(){
         return currentPlayer!=null && currentPlayer.isPlaying();
     }
@@ -84,6 +99,9 @@ public class Players {
         currentPlayer.start();
     }
 
+    /**
+     * 需要进行内存释放以避免Memory Leak
+     */
     public void release(){
         mRelease(water0p);
         mRelease(water1p);

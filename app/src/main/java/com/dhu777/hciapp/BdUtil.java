@@ -25,10 +25,17 @@ import java.util.Map;
 
 import static com.baidu.speech.asr.SpeechConstant.BOT_ID;
 
+/**
+ * 用于baidu语音识别的工具类
+ */
 @SuppressWarnings("WeakerAccess")
 public class BdUtil {
+    /** 标识Baidu语音识别结束*/
     public static final String RESULT_TYPE_FINAL = "final_result";
 
+    /**
+     * @return 默认会话参数
+     */
     public static JSONArray unitParams() {
         JSONArray json = new JSONArray();
         try {
@@ -43,6 +50,10 @@ public class BdUtil {
         return json;
     }
 
+    /**
+     * @param context 应用上下文
+     * @return 返回启动语音识别的默认参数列表
+     */
     @SuppressLint("HandlerLeak")
     public static Map<String, Object> startParams(Context context) {
         Map<String, Object> params = new LinkedHashMap<>();
@@ -51,7 +62,7 @@ public class BdUtil {
         params.put(SpeechConstant.DISABLE_PUNCTUATION, true);
         params.put(SpeechConstant.BOT_SESSION_LIST, unitParams());
 
-        (new AutoCheck(context, new Handler() {
+        (new AutoCheck(context.getApplicationContext(), new Handler() {
             @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
             public void handleMessage(Message msg) {
                 if (msg.what == 100) {
@@ -67,6 +78,11 @@ public class BdUtil {
        return params;
     }
 
+
+    /**
+     * 申请baidu语音识别需要的权限
+     * @param activity 需要权限的Activity
+     */
     public static void initPermission(Activity activity) {
         String[] permissions = {Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.ACCESS_NETWORK_STATE,

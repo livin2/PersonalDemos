@@ -5,6 +5,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+/**
+ * 语音识别结果数据DTO
+ */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class MyRecogResult{
     private static final int ERROR_NONE = 0;
