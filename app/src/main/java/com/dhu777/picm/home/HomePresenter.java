@@ -1,5 +1,6 @@
 package com.dhu777.picm.home;
 
+import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
@@ -8,12 +9,9 @@ import androidx.annotation.NonNull;
 
 import com.dhu777.picm.R;
 import com.dhu777.picm.data.LoginDataSource;
-import com.dhu777.picm.data.LoginRepositrory;
 import com.dhu777.picm.data.entity.BaseResponse;
 import com.dhu777.picm.data.entity.UserToken;
 import com.dhu777.picm.data.remote.PicRemoteRepo;
-
-import static com.dhu777.picm.util.ComUtil.getContext;
 
 import com.dhu777.picm.data.remote.PicUpload;
 import com.dhu777.picm.piclist.PicListPresenter;
@@ -27,14 +25,12 @@ public class HomePresenter implements PicUpload.UpPicCallback{
     private LoginDataSource mLoginRepo;
     private static final String TAG = "HomePresenter";
     private PicListPresenter picPresenter;
+    private Context mContext;
 
-    public HomePresenter(LoginDataSource mLoginRepo) {
-        this.mLoginRepo = mLoginRepo;
-    }
-
-    public HomePresenter(LoginDataSource mLoginRepo, PicListPresenter picPresenter) {
+    public HomePresenter(LoginDataSource mLoginRepo, PicListPresenter picPresenter, Context mContext) {
         this.mLoginRepo = mLoginRepo;
         this.picPresenter = picPresenter;
+        this.mContext = mContext;
     }
 
     public LoginDataSource  getLoginRepo(){
@@ -43,7 +39,7 @@ public class HomePresenter implements PicUpload.UpPicCallback{
 
     public void upload(@NonNull final Uri picUri){
         final String name =  picUri.getLastPathSegment();
-        String mimeType = getContext().getContentResolver().getType(picUri);
+        String mimeType = mContext.getContentResolver().getType(picUri);
         Log.d("HomePresenter", "upload(): name:"+name);
         Log.d("HomePresenter", "upload(): mimeType:"+mimeType);
         mLoginRepo.getToken(new LoginDataSource.LoginCallback() {
@@ -58,14 +54,14 @@ public class HomePresenter implements PicUpload.UpPicCallback{
 
             @Override
             public void onFail(Throwable e) {
-                Toast.makeText(getContext(),
+                Toast.makeText(mContext,
                         e.getMessage(),Toast.LENGTH_SHORT).show();
             }
         });
     }
     private byte[] openPic(Uri picUri){
         try {
-            InputStream inputStream = getContext()
+            InputStream inputStream = mContext
                     .getContentResolver().openInputStream(picUri);
             byte[] targetArray = new byte[0];
             targetArray = ByteStreams.toByteArray(inputStream);
@@ -82,14 +78,14 @@ public class HomePresenter implements PicUpload.UpPicCallback{
     public void onPicUploaded(@NonNull BaseResponse response) {
         if (response.getMsg()!=null)
             Log.d(TAG, "onPicUploaded: "+response.getMsg());
-        Toast.makeText(getContext(),
+        Toast.makeText(mContext,
                 R.string.msg_suc_upload,Toast.LENGTH_SHORT).show();
         picPresenter.refreshList();
     }
 
     @Override
     public void onUploadFail(@NonNull Throwable t) {
-        Toast.makeText(getContext(),
+        Toast.makeText(mContext,
                 t.getMessage(),Toast.LENGTH_SHORT).show();
         picPresenter.refreshList();
     }

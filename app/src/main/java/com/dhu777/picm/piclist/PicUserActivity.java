@@ -45,7 +45,7 @@ public class PicUserActivity extends AppCompatActivity{
         SharedPreferences preferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
         int preMode = Injection.mode;
-        Injection.mode = preferences.getBoolean("mock",true)?
+        Injection.mode = preferences.getBoolean("mock",false)?
                 Injection.MOKE:Injection.REAL;
 
         if(preMode!=Injection.mode && mPicPresenter!=null){

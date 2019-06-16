@@ -20,6 +20,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.dhu777.picm.data.remote.PicRemoteContract.checkCode;
 import static com.dhu777.picm.data.remote.PicRemoteContract.getApiService;
 import static com.dhu777.picm.util.ComUtil.checkNotNull;
 
@@ -57,6 +58,9 @@ public class PicRemoteRepo implements PicDataSource,PicUpload{
             @Override
             public void onResponse(Call<List<PicInfo>> call, Response<List<PicInfo>> response) {
                 try{
+                    if(!checkCode(response.code())){
+                        callback.onDataNotAvailable(new Exception("Code:"+response.code()));
+                    }
                     Log.d("PicRemoteRepo", "onResponse: Success");
                     List<PicInfo> pics = checkNotNull(response.body());
                     Log.d("PicRemoteRepo", "onResponse: picId 0:"+pics.get(0).getPicId());
@@ -76,7 +80,7 @@ public class PicRemoteRepo implements PicDataSource,PicUpload{
         });
     }
 
-    //TODO
+    //pass
     @Override
     public void getPic(@NonNull String picId, @NonNull GetPicCallback callback) {
 
@@ -88,6 +92,9 @@ public class PicRemoteRepo implements PicDataSource,PicUpload{
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(!checkCode(response.code())){
+                    callback.onDataNotAvailable(new Exception("Code:"+response.code()));
+                }
                 if (callback!=null){
                     if(response.body()!=null){
                         BaseResponse<ResponseBody> respmsg = new BaseResponse<ResponseBody>(200,"success");
@@ -113,7 +120,10 @@ public class PicRemoteRepo implements PicDataSource,PicUpload{
         apiService.uploadSinglePic(part,jwt).enqueue(new Callback<BaseResponse<String>>() {
             @Override
             public void onResponse(Call<BaseResponse<String>> call, Response<BaseResponse<String>> response) {
-                Log.d("PicRemoteRepo", "onResponse:");
+                if(!checkCode(response.code())){
+                    callback.onUploadFail(new Exception("Fail Code:"+response.code()));
+                }
+                Log.d("PicRemoteRepo", "onResponse:"+response);
                 BaseResponse body = response.body();
                 if (callback!=null && body!=null)
                     callback.onPicUploaded(body);

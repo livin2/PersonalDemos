@@ -46,7 +46,7 @@ public class InfoDialogFragment extends DialogFragment {
         textUser.append(picInfo.getUserName().toString());
 
         TextView textSize = view.findViewById(R.id.text_info_size);
-        textSize.append(picInfo.getPicSize().toString());
+        textSize.append(picInfo.getPicSize().toString()+" KB");
 
         TextView textWidth = view.findViewById(R.id.text_info_width);
         textWidth.append(picInfo.getWidth().toString());

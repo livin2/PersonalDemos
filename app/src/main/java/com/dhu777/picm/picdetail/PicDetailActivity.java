@@ -1,9 +1,11 @@
 package com.dhu777.picm.picdetail;
 
+import android.Manifest;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -13,8 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.bumptech.glide.Glide;
@@ -85,13 +90,22 @@ public class PicDetailActivity extends AppCompatActivity implements PicDetailCon
                 dialog.show(getSupportFragmentManager(), "missiles");
                 return true;
             case R.id.picdetail_menu_savepic:
-                mPresenter.savePic(picInfo);
+                if(checkPremission())
+                    mPresenter.savePic(picInfo);
+                else
+                    requestPermission(R.id.picdetail_menu_savepic);
                 return true;
             case R.id.picdetail_menu_sharepic:
-                mPresenter.sharePic(picInfo);
+                if(checkPremission())
+                    mPresenter.sharePic(picInfo);
+                else
+                    requestPermission(R.id.picdetail_menu_sharepic);
                 return true;
             case R.id.picdetail_menu_editpic:
-                mPresenter.editPic(picInfo);
+                if(checkPremission())
+                    mPresenter.editPic(picInfo);
+                else
+                    requestPermission(R.id.picdetail_menu_editpic);
                 return true;
             case R.id.picdetail_menu_copyurl:
                 ClipboardManager clipboard = (ClipboardManager)
@@ -108,7 +122,32 @@ public class PicDetailActivity extends AppCompatActivity implements PicDetailCon
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions
+            , @NonNull int[] grantResults) {
+        if(grantResults.length>0  &&
+                grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            onPermissionGet(requestCode);
+        }else{
+            Toast.makeText(getApplicationContext()
+                    ,"获取读写权限失败",Toast.LENGTH_SHORT).show();
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 
+    private void onPermissionGet(int requestCode){
+        switch (requestCode){
+            case R.id.picdetail_menu_savepic:
+                mPresenter.savePic(picInfo);
+                return;
+            case R.id.picdetail_menu_editpic:
+                mPresenter.editPic(picInfo);
+                return;
+            case R.id.picdetail_menu_sharepic:
+                mPresenter.sharePic(picInfo);
+                return;
+        }
+    }
 
     @Override
     public void showShare(Intent shareIntent){
@@ -121,10 +160,6 @@ public class PicDetailActivity extends AppCompatActivity implements PicDetailCon
         startActivity(Intent.createChooser(editIntent, getResources().getString(R.string.edit_to)));
     }
 
-    @Override
-    public void showMenuDel() {
-
-    }
 
     @Override
     public void showToast(String msg) {
@@ -147,5 +182,19 @@ public class PicDetailActivity extends AppCompatActivity implements PicDetailCon
     @Override
     public void finish() {
         super.finish();
+    }
+
+    public boolean checkPremission(){
+        return ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void requestPermission(int requestCode){
+        if(!checkPremission()){
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    requestCode);
+        }
     }
 }

@@ -1,9 +1,11 @@
 package com.dhu777.picm.home;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.dhu777.picm.MainActivity;
@@ -18,8 +20,11 @@ import com.dhu777.picm.piclist.PicListPresenter;
 import com.dhu777.picm.piclist.PicUserActivity;
 import com.dhu777.picm.util.ComUtil;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 
@@ -36,14 +41,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.Menu;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
     public static final int REQUEST_PICK_PIC = 1;
+    public static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 2;
 
     private DrawerLayout mDrawerLayout;
     private PicListPresenter mPicPresenter;
@@ -56,6 +60,8 @@ public class HomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        requestPermission();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -93,24 +99,7 @@ public class HomeActivity extends AppCompatActivity
 
         mPicPresenter = new PicListPresenter(Injection.providePicInfoRepositrory(),picLFragment);
         mHomePresenter = new HomePresenter(Injection.provideLoginRepositrory(getApplicationContext()),
-                mPicPresenter);
-
-        mHomePresenter.getLoginRepo().getToken(new LoginDataSource.LoginCallback() {
-            @Override
-            public void onSuccess(UserToken Token) {
-                try {
-                    TextView unameV = headerView.findViewById(R.id.nav_header_text);
-                    unameV.setText(Token.getName());
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFail(Throwable e) {
-                e.printStackTrace();
-            }
-        });
+                mPicPresenter, this);
     }
 
     public void loginToggle(){
@@ -150,6 +139,23 @@ public class HomeActivity extends AppCompatActivity
             //providePicInfoRepositrory根据mode标志注入 所以要放在mode标志变更后
             mPicPresenter.refreshList();
         }
+
+        mHomePresenter.getLoginRepo().getToken(new LoginDataSource.LoginCallback() {
+            @Override
+            public void onSuccess(UserToken Token) {
+                try {
+                    TextView unameV = headerView.findViewById(R.id.nav_header_text);
+                    unameV.setText(Token.getName());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFail(Throwable e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -254,5 +260,36 @@ public class HomeActivity extends AppCompatActivity
                 swipeRefresh.setRefreshing(false);
             }
         });
+    }
+
+    public boolean checkPremission(){
+        return ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void requestPermission(){
+        if(!checkPremission()){
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions
+            , @NonNull int[] grantResults) {
+        switch (requestCode){
+            case PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
+                if(grantResults.length>0  &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //success
+                }else{
+                    Toast.makeText(getApplicationContext()
+                            ,"获取读写权限失败",Toast.LENGTH_SHORT).show();
+                }
+                return;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

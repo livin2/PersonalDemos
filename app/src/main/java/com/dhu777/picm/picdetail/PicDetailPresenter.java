@@ -108,7 +108,9 @@ public class PicDetailPresenter implements PicDetailContract.Presenter,PicDataSo
             return;
 
         File dir = getPublicAlbumStorageDir(mView.getApplicationContext());
-        final File file = new File(dir, picInfo.getPicName());
+        if(dir==null)
+            return;
+        final File file = new File(dir, picInfo.getPicName()+"."+picInfo.getPicType());
         if(file.exists()){
             mView.showToast(R.string.file_exist);
             return;
@@ -154,7 +156,9 @@ public class PicDetailPresenter implements PicDetailContract.Presenter,PicDataSo
             return;
 
         File dir = getPublicAlbumStorageDir(mView.getApplicationContext());
-        final File file = new File(dir, picInfo.getPicName());
+        if(dir==null)
+            return;
+        final File file = new File(dir, picInfo.getPicName()+"."+picInfo.getPicType());
         if(file.exists()){
             mShare(FileToUrl(file));
             return;
@@ -183,7 +187,9 @@ public class PicDetailPresenter implements PicDetailContract.Presenter,PicDataSo
             return;
 
         File dir = getPublicAlbumStorageDir(mView.getApplicationContext());
-        final File file = new File(dir, picInfo.getPicName());
+        if(dir==null)
+            return;
+        final File file = new File(dir, picInfo.getPicName()+"."+picInfo.getPicType());
         if(file.exists()){
             mEdit(FileToUrl(file));
             return;
@@ -233,6 +239,8 @@ public class PicDetailPresenter implements PicDetailContract.Presenter,PicDataSo
         if (!dir.exists()) {
             if(!dir.mkdirs()){
                mView.showToast(R.string.create_dir_fail);
+                mView.showToast(dir.getPath());
+               return null;
             }
         }
         return dir;

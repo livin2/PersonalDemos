@@ -21,7 +21,7 @@ import retrofit2.Response;
 import static com.dhu777.picm.data.remote.PicRemoteContract.getApiService;
 import static com.dhu777.picm.util.ComUtil.checkNotNull;
 
-public class PicUserRemoteRepo implements PicDataSource{
+public class PicUserRemoteRepo extends PicRemoteRepo{
     private static PicUserRemoteRepo INSTANCE;
     private static PicRemoteContract.Api apiService;
     private static PicRemoteContract.Api realApi;
@@ -50,11 +50,6 @@ public class PicUserRemoteRepo implements PicDataSource{
     }
 
     @Override
-    public void refresh() {
-        //pass
-    }
-
-    @Override
     public void fetchPicList(@NonNull final FetchPicsCallback callback) {
         Log.d("PicUserRemoteRepo", "fetchPicList");
         Call<List<PicInfo>> call = apiService.getUserPicList(checkNotNull(userToken.getName()),
@@ -72,15 +67,5 @@ public class PicUserRemoteRepo implements PicDataSource{
                 t.printStackTrace(); //TODO
             }
         });
-    }
-
-    @Override
-    public void getPic(@NonNull String picId, @NonNull GetPicCallback callback) {
-        //todo
-    }
-
-    @Override
-    public void deletePic(@NonNull String picId, @NonNull String jwt, @Nullable DelPicCallback callback) {
-
     }
 }

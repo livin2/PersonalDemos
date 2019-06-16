@@ -64,6 +64,14 @@ public class PicRemoteContract {
         Call<ResponseBody> deledeSinglePic(@Path("userId") String userid, @Header("jwtToken")String jwt);
     }
 
+    public static boolean checkCode(int code){
+        if(code == 200){
+            return true;
+        }
+        //500 400
+        return false;
+    }
+
     /**
      * RemoteApi return
      * POJO class provide for gson

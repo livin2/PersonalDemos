@@ -13,7 +13,6 @@ public interface PicDetailContract {
         void showToast(int Rid);
         void showShare(Intent shareIntent);
         void showEdit(Intent editIntent);
-        void showMenuDel();
         Context getApplicationContext();
         void finish();
     }

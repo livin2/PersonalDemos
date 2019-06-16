@@ -40,7 +40,7 @@ public class PicInfo {
     }
     public String getUserName() { return userName==null?"null":userName; }
     public void setUserName(String userName) { this.userName = userName; }
-    public Long getPicSize() { return picSize==null?0:picSize; }
+    public Long getPicSize() { return picSize==null?0:picSize/8/1024; }
     public void setPicSize(Long picSize) { this.picSize = picSize; }
 
 
