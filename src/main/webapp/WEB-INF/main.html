@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>main</title>
+    <link rel="stylesheet" type="text/css" href="css/bulma.css"/>
+    <style type="text/css">
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+    <!-- fontawesome别用svg版 -->
+    <link rel="stylesheet" href="css/fontawesome/all.css"/>
+</head>
+
+<body>
+<div id="body">
+    <com-navbar sysname="超市会员管理系统" username="User">
+        <template #menus>
+            <a @click="vipFunOn" class="navbar-item" :class="{'has-text-link':currentTabComponent=='func-vip'}">会员信息</a>
+            <a @click="purHisFucOn" class="navbar-item" :class="{'has-text-link':currentTabComponent=='func-purhis'}">消费记录</a>
+        </template>
+        <template #dropdwon>
+            <!--<a class="navbar-item">-->
+            <!--修改密码-->
+            <!--</a>-->
+            <a @click="loginOut" class=" navbar-item ">
+                <span>登出</span>
+                <span class="icon is-small has-text-danger">
+                        <i class="fas fa-power-off"></i>
+                    </span>
+            </a>
+        </template>
+    </com-navbar>
+    <br/><br/>
+
+    <keep-alive>
+        <component v-bind:is="currentTabComponent" class="container is-fluid box"></component>
+    </keep-alive>
+    <!--<func-vip :tables="tables" class="container is-fluid box"></func-vip>-->
+</div>
+</body>
+
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/axios.min.js"></script>
+<!--<script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
+<script type="text/javascript" src="components/vip-tr.js"></script>
+<script type="text/javascript" src="components/vip-table.js"></script>
+<script type="text/javascript" src="components/vip-info.js"></script>
+<script type="text/javascript" src="components/com-table.js"></script>
+<script type="text/javascript" src="components/com-navbar.js"></script>
+<script type="text/javascript" src="components/search-bar.js"></script>
+<script type="text/javascript" src="components/func-vip.js"></script>
+<script type="text/javascript" src="components/func-purhis.js"></script>
+<script>
+    var Vpage = new Vue({
+        el: "#body",
+        data: {
+            //ComponentField
+            currentTabComponent: "func-vip",
+            //Component-MountedEvent
+            v_on_event: "tr-on-click", //Html会转换大小写
+            vOnFunc: null,
+            //Component-MountedProps
+            vProps: null,
+
+
+        },
+        methods: {
+            vipFunOn: function () {
+                this.currentTabComponent = "func-vip"
+            },
+            purHisFucOn: function () {
+                this.currentTabComponent = "func-purhis"
+            },
+            loginOut: function () {
+                window.location.reload()
+            }
+        }
+    })
+</script>

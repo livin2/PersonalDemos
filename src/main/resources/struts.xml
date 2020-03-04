@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+    <constant name="struts.objectFactory.spring.autoWire.alwaysRespect" value="true"/>
+    <!-- 修改常量管理struts 中的action的工程，这个常量的使用，必须引入 spring和struts的整合包，不然spring无法管理struts2 Action 中的实体类-->
+    <constant name="struts.objectFactory" value="spring"/>
+
+
+    <package name="vipsys" namespace="/" extends="struts-default,json-default">
+        <default-action-ref name="index"></default-action-ref>
+
+        <global-results>
+            <result name="input" type="json">
+                <param name="statusCode">400</param>
+                <param name="root">action</param>
+                <param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">actionErrors\[\d+\], fieldErrors\..+$, actionMessages\[\d+\]</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="root">actionErr</param>
+                <!--<param name="errorCode">40404</param>-->
+                <param name="ignoreHierarchy">false</param>
+                <!--<param name="includeProperties">,actionErrors\[\d+\], fieldErrors\..+$, actionMessages\[\d+\]</param>-->
+            </result>
+        </global-results>
+
+        <action name="index">
+            <result type="dispatcher">index.html</result>
+        </action>
+
+        <action name="getAllVip" class="getAllVipAction">
+            <result name="success" type="json">
+                <param name="root">allVip</param>
+                <!--<param name="noCache">true</param>-->
+            </result>
+        </action>
+        <action name="searchVip" class="SearchVipAction">
+            <interceptor-ref name="modelDriven"/>
+            <!--将modelDriven返回的对象入栈-->
+            <interceptor-ref name="json">
+                <param name="ignoreHierarchy">false</param>
+                <!--<param name="root">action</param>-->
+                <!--只反序列化单个,不设置root取value栈顶反序列-->
+            </interceptor-ref>
+            <result name="success" type="json">
+                <param name="root">vipList</param>
+                <param name="noCache">true</param>
+            </result>
+        </action>
+
+        <action name="advancedSearch" class="AdvancedSearchAction">
+            <interceptor-ref name="modelDriven"/>
+            <interceptor-ref name="json">
+                <param name="ignoreHierarchy">false</param>
+            </interceptor-ref>
+            <result name="success" type="json">
+                <param name="root">vipList</param>
+                <param name="noCache">true</param>
+            </result>
+        </action>
+
+        <action name="updateVip" class="upVipAction">
+            <interceptor-ref name="modelDriven"/>
+            <interceptor-ref name="json">
+                <param name="ignoreHierarchy">false</param>
+            </interceptor-ref>
+            <result name="success" type="json">
+                <param name="root">response</param>
+                <param name="ignoreHierarchy">false</param>
+                <param name="noCache">true</param>
+            </result>
+        </action>
+
+        <action name="getNewId" class="addVipAction" method="FetchNewId">
+            <result name="gotNewId" type="json">
+                <param name="root">newId</param>
+                <param name="noCache">true</param>
+            </result>
+        </action>
+
+        <action name="addNewVip" class="addVipAction">
+            <interceptor-ref name="modelDriven"/>
+            <interceptor-ref name="json">
+                <param name="ignoreHierarchy">false</param>
+            </interceptor-ref>
+            <result name="success" type="json">
+                <param name="root">response</param>
+                <param name="ignoreHierarchy">false</param>
+                <param name="noCache">true</param>
+            </result>
+        </action>
+
+        <action name="deleteVip" class="deleteVipAction">
+            <interceptor-ref name="modelDriven"/>
+            <interceptor-ref name="json">
+                <param name="ignoreHierarchy">false</param>
+            </interceptor-ref>
+            <result name="success" type="json">
+                <param name="root">response</param>
+                <param name="ignoreHierarchy">false</param>
+                <param name="noCache">true</param>
+            </result>
+        </action>
+
+        <action name="searchPurHis" class="PurHisSearhcAction">
+            <interceptor-ref name="modelDriven"/>
+            <interceptor-ref name="json">
+                <param name="ignoreHierarchy">false</param>
+            </interceptor-ref>
+            <result name="success" type="json">
+                <param name="root">resultList</param>
+                <param name="ignoreHierarchy">false</param>
+                <param name="noCache">true</param>
+            </result>
+        </action>
+
+        <action name="searchPHD" class="PHDSearhcAction">
+            <interceptor-ref name="modelDriven"/>
+            <interceptor-ref name="json">
+                <param name="ignoreHierarchy">false</param>
+            </interceptor-ref>
+            <result name="success" type="json">
+                <param name="root">resultList</param>
+                <param name="ignoreHierarchy">false</param>
+                <param name="noCache">true</param>
+            </result>
+        </action>
+
+        <action name="getAllPurHis" class="GetAllPurHisAction">
+            <result name="success" type="json">
+                <param name="root">resultList</param>
+                <param name="ignoreHierarchy">false</param>
+                <param name="noCache">true</param>
+            </result>
+        </action>
+
+        <action name="login" class="loginAction">
+            <interceptor-ref name="modelDriven"/>
+            <interceptor-ref name="json">
+            <param name="ignoreHierarchy">false</param>
+            </interceptor-ref>
+            <result name="success" type="dispatcher">
+                <param name="location">/WEB-INF/main.html</param>
+                <param name="noCache">true</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="root">actionErr</param>
+                <param name="ignoreHierarchy">false</param>
+                <param name="noCache">true</param>
+            </result>
+        </action>
+
+        <!--<action name="main">-->
+            <!--<result type="dispatcher">/WEB-INF/main.html</result>-->
+        <!--</action>-->
+    </package>
+</struts>

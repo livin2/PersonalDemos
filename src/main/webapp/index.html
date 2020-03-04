@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理系统登录</title>
+    <link rel="stylesheet" type="text/css" href="css/bulma.css"/>
+    <link rel="stylesheet" href="css/fontawesome/all.css"/>
+</head>
+<body>
+<section id="login" class="hero is-primary is-fullheight is-bold">
+
+    <div class="hero-body">
+        <div class="level container ">
+            <div class="level-left">
+                <div>
+                    <h1 class=" title">
+                        超市会员管理系统
+                    </h1>
+                    <h2 class="subtitle">
+                        用户名:MrAqua 密码:114
+                    </h2>
+                </div>
+            </div>
+
+            <div class="level-right">
+                <div class="box has-text-centered">
+                    <div class="field ">
+                        <p class="control has-icons-left">
+                            <input v-model="userIn" class="input is-medium" type="text" placeholder="User">
+                            <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        </p>
+                    </div>
+                    <div class="field">
+                        <p class="control has-icons-left">
+                            <input v-model="pwIn" class="input is-medium" type="password" placeholder="Password">
+                            <span class="icon is-small is-left">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        </p>
+                    </div>
+                    <div class="field">
+                        <p class="control">
+                            <button @click="loginM" class="button is-medium is-success">
+                                Login
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--<div id="login">-->
+<!--<a class="button" href="/comvipsys_war/indexMain"> nono</a>-->
+<!--</div>-->
+</body>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/axios.min.js"></script>
+<!--<script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
+<script>
+    var Vp = new Vue({
+        el: "#login",
+        data: {
+            loginURL: '/comvipsys_war/login',
+            userIn: null,
+            pwIn: null
+        },
+        methods: {
+            loginM: async function () {
+                try{
+                    console.log("user", this.userIn)
+                    console.log("pw", this.pwIn)
+                    let resp = await axios.post(this.loginURL, {
+                        // params: {
+                            name: this.userIn,
+                            password: this.pwIn
+                        // }
+                    })
+                    console.log(resp)
+                    if(resp.data){
+                        document.write(resp.data);
+                    }else{
+                        throw resp.data
+                    }
+                }catch (e) {
+                    alert("登录失败")
+                    console.log(e)
+                }
+            }
+        }
+    })
+</script>
+</html>
