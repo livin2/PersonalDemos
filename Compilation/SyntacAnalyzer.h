@@ -25,7 +25,7 @@ struct SyntacAnalyzer
 	bool subProgram();
 	bool statementList();
 	bool statement();
-	bool defStatement();  //一定有一个；很怪
+	bool defStatement();  
 	bool assignStatement();
 	bool ifStatement();
 	bool whileStatement();

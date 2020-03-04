@@ -116,7 +116,7 @@ bool SyntacAnalyzer::statement()
 		return true;
 	if (defStatement())
 		return true;
-	return true; //¿Õ
+	return true; //ç©º
 }
 
 bool SyntacAnalyzer::defStatement()
@@ -136,7 +136,7 @@ bool SyntacAnalyzer::defStatement()
 		return false;
 	}
 
-	////Ã»·ÖºÅ
+	////æ²¡åˆ†å·
 	//while(LeA.NextSym(tmp))
 	//{
 	//	if (tmp.s != ",")
@@ -152,7 +152,7 @@ bool SyntacAnalyzer::defStatement()
 	//}
 	//return true;
 
-	//ÓĞ·ÖºÅ
+	//æœ‰åˆ†å·
 	while (LeA.NextSym(tmp))
 	{
 		if (tmp.s != ",")
@@ -260,21 +260,21 @@ bool SyntacAnalyzer::ifStatement()
 
 	if (!LeA.NextReserved(tmp)) 
 	{
-		TFfill(F, TACs.size());//ÎŞelse ÏÂÒ»¾äÊÇF³ö¿Ú
+		TFfill(F, TACs.size());//æ— else ä¸‹ä¸€å¥æ˜¯Få‡ºå£
 		return true;
 	}
 	else if (tmp.s != "else")
 	{
 		LeA.buf.retract();
-		TFfill(F, TACs.size());//ÎŞelse ÏÂÒ»¾äÊÇF³ö¿Ú
+		TFfill(F, TACs.size());//æ— else ä¸‹ä¸€å¥æ˜¯Få‡ºå£
 		return true;
 	}
-	//ÓĞelse Ó¦ÔÚifºóÃæ·Å¸öÎŞÌõ¼şÌø³öµ½END³ö¿Ú
+	//æœ‰else åº”åœ¨ifåé¢æ”¾ä¸ªæ— æ¡ä»¶è·³å‡ºåˆ°ENDå‡ºå£
 	int END = TACs.size();
 	TACs.push_back(TAC("jmp", "null", "null", TAC::waitForFill,true));
 	//
 
-	TFfill(F, TACs.size());//ÓĞelse ÏÂÒ»¾äÊÇF³ö¿Ú
+	TFfill(F, TACs.size());//æœ‰else ä¸‹ä¸€å¥æ˜¯Få‡ºå£
 	if (!statement())
 	{
 		throwError("expect statement", tmp.p);
@@ -282,7 +282,7 @@ bool SyntacAnalyzer::ifStatement()
 	}
 
 	
-	TFfill(END, TACs.size());//END ³ö¿Ú»ØÌî
+	TFfill(END, TACs.size());//END å‡ºå£å›å¡«
 	return true;
 }
 
@@ -309,7 +309,7 @@ bool SyntacAnalyzer::whileStatement()
 	}
 
 	int T = -1, F = -1, andOr = noFlag;
-	int STA = TACs.size();//ÏÂÒ»¾äÊÇwhile TAC¿ªÍ·
+	int STA = TACs.size();//ä¸‹ä¸€å¥æ˜¯while TACå¼€å¤´
 	if (!boolExpression(T,F,andOr))
 	{
 		throwError("expect boolExpression", tmp.p);
@@ -333,9 +333,9 @@ bool SyntacAnalyzer::whileStatement()
 		throwError("expect statement", tmp.p);
 		return false;
 	}
-	TACs.push_back(TAC("jmp", "null", "null", STA,true));//while Ñ­»·
+	TACs.push_back(TAC("jmp", "null", "null", STA,true));//while å¾ªç¯
 
-	TFfill(F, TACs.size());//³ö¿Ú
+	TFfill(F, TACs.size());//å‡ºå£
 	return true;
 }
 

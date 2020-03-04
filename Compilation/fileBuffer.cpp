@@ -5,8 +5,8 @@ fileBuffer::fileBuffer(ifstream & in)
 	string line;
 	while (getline(in, line))
 		src.push_back(line + "\n");
-	int ln = (int)src.size() - 1;				//·ÀÖ¹ÎŞ·ûºÅÒç³ö
-	end = pos(ln, (int)src[ln].size() - 1);		//·ÀÖ¹ÎŞ·ûºÅÒç³ö
+	int ln = (int)src.size() - 1;				//é˜²æ­¢æ— ç¬¦å·æº¢å‡º
+	end = pos(ln, (int)src[ln].size() - 1);		//é˜²æ­¢æ— ç¬¦å·æº¢å‡º
 }
 
 bool fileBuffer::getNext(string &s, pos &p)
@@ -73,7 +73,7 @@ bool fileBuffer::getNextDigit(string &s, pos &p)
 				}
 				s = tmp;
 				p = pos(pcur.l, pcur.x);
-				canContinue = false;//Êı×ÖºóÃæ¸úÁËÎ´Öª×Ö·û
+				canContinue = false;//æ•°å­—åé¢è·Ÿäº†æœªçŸ¥å­—ç¬¦
 				return false;
 			}
 		}
@@ -220,7 +220,7 @@ void fileBuffer::skipBlank()
 	{
 		for (; xi < src[li].size(); xi++)
 		{
-			if (!isblank(src[li][xi]) && src[li][xi] != '\n')		//isblank²¢²»»á¼ì²é\n
+			if (!isblank(src[li][xi]) && src[li][xi] != '\n')		//isblankå¹¶ä¸ä¼šæ£€æŸ¥\n
 				return;
 		}
 		xi = 0;
@@ -230,7 +230,7 @@ void fileBuffer::skipBlank()
 void fileBuffer::NextCur()
 {
 	pre.push(cur);
-	if (cur.x >= (int)src[cur.l].size() - 1)	//·ÀÖ¹ÎŞ·ûºÅÒç³ö
+	if (cur.x >= (int)src[cur.l].size() - 1)	//é˜²æ­¢æ— ç¬¦å·æº¢å‡º
 	{
 		cur.l++;
 		cur.x = 0;

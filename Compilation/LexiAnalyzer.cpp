@@ -1,6 +1,6 @@
 #include "LexiAnalyzer.h"
 LexiAnalyzer::LexiAnalyzer(string in, string out)
-	:fin(ifstream(in)), fout(ofstream(out)), buf(fin), outToF(false), canContinue(true)//按声明次序初始化
+	:fin(ifstream(in)), fout(ofstream(out)), buf(fin), outToF(false), canContinue(true)//鎸夊０鏄庢搴忓垵濮嬪寲
 {
 
 }

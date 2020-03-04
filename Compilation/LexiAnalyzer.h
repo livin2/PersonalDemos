@@ -51,7 +51,7 @@ struct fileBuffer
 	pos cur, end;//pos line,x
 	stack<pos> pre;
 	static const char npos = -1;
-	bool canContinue; //×¢ÊÍÎ´·â±Õ ·Ç·¨·ûºÅ
+	bool canContinue; //æ³¨é‡Šæœªå°é—­ éžæ³•ç¬¦å·
 	fileBuffer(ifstream& in);
 	bool reachEnd();
 	bool digEnd(char ch);
@@ -61,8 +61,8 @@ struct fileBuffer
 	//bool getNextChar(string & s, pos & p);
 	//bool getNextStr(string & s, pos & p);
 	bool getNextSym(string & s, pos & p,int &idx);
-	bool skipComments();	// "/*asdsaf*/9"   true->curÔÚ9 false-> curÔÚ/ || ×¢ÊÍÎ´·â±Õ 
-	bool CommentEnd();		// "asdsaf*/9"   true->curÔÚ9 false->curÔÚ* 
+	bool skipComments();	// "/*asdsaf*/9"   true->curåœ¨9 false-> curåœ¨/ || æ³¨é‡Šæœªå°é—­ 
+	bool CommentEnd();		// "asdsaf*/9"   true->curåœ¨9 false->curåœ¨* 
 	void retract();
 	char getCur();
 	void NextCur();
