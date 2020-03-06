@@ -53,4 +53,8 @@
 - 账号功能:删除本账号上传的图片,对非自己上传的图片无删除选项(客户端)与权限(后端)。
 
   ![006](https://i.loli.net/2020/03/07/8ETh2N6vOJ1Wfck.gif)
+  
+  ## 下载
+  若写后端的那位同学没有维护他的服务(~~没钱续VPS~~)，那么app并不能如上图般正常使用。
+  https://github.com/livin2/PersonalDemos/releases/tag/picm
 
