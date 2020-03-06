@@ -22,5 +22,5 @@
 
 ## 下载
 
- https://github.com/livin2/PersonalDemos/releases/tag/1.0 
+ https://github.com/livin2/PersonalDemos/releases/tag/HCIdemo
 
