@@ -1,0 +1,43 @@
+参数:
+	爬取航线最大值:5
+	文件路径:pyCrawler\data\five.csv
+数据已爬取：城市列表
+数据已爬取：航线列表
+1.航线数据已爬取：安庆-北京
+2.航线数据已爬取：安庆-福州
+3.航线数据已爬取：安庆-桂林
+4.航线数据已爬取：安庆-广州
+5.航线数据已爬取：安庆-贵阳
+总计爬取5条航线数据
+总计爬取7条航班数据
+-----数据结构信息-----
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 7 entries, 0 to 6
+Data columns (total 14 columns):
+航空公司      7 non-null object
+航班号       7 non-null object
+出发时间      7 non-null object
+出发机场      7 non-null object
+出发城市      7 non-null object
+出发城市代码    7 non-null object
+经停        7 non-null object
+到达时间      7 non-null object
+到达机场      7 non-null object
+到达城市      7 non-null object
+到达城市代码    7 non-null object
+准点率       7 non-null float64
+价格(￥)     5 non-null float64
+URL       7 non-null object
+dtypes: float64(2), object(12)
+memory usage: 504.0+ bytes
+
+-----数据统计信息-----
+            准点率       价格(￥)
+count  7.000000    5.000000
+mean   0.992857  351.400000
+std    0.012536  195.892317
+min    0.970000  133.000000
+25%    0.990000  204.000000
+50%    1.000000  340.000000
+75%    1.000000  460.000000
+max    1.000000  620.000000

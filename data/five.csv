@@ -1,0 +1,8 @@
+﻿,航空公司,航班号,出发时间,出发机场,出发城市,出发城市代码,经停,到达时间,到达机场,到达城市,到达城市代码,准点率,价格(￥),URL
+0,海南航空,HU7681,18:35,安庆天柱山机场,安庆,aqg,None,20:40,北京首都国际机场T1,北京,bjs,97%,620,https://flights.ctrip.com/schedule/hu7681.html
+1,福州航空,FU6637,12:30,安庆天柱山机场,安庆,aqg,None,14:00,福州长乐国际机场,福州,foc,98%,133,https://flights.ctrip.com/schedule/fu6637.html
+2,东方航空,MU5539,08:15,安庆天柱山机场,安庆,aqg,None,10:15,桂林两江国际机场T2,桂林,kwl,100%,340,https://flights.ctrip.com/schedule/mu5539.html
+3,南方航空,CZ3320,10:45,安庆天柱山机场,安庆,aqg,None,12:40,广州白云国际机场T2,广州,can,100%,460,https://flights.ctrip.com/schedule/cz3320.html
+4,东方航空,MU3002,10:45,安庆天柱山机场,安庆,aqg,None,12:40,广州白云国际机场T1,广州,can,100%,,https://flights.ctrip.com/schedule/mu3002.html
+5,海南航空,HU1564,22:05,安庆天柱山机场,安庆,aqg,None,00:40,贵阳龙洞堡国际机场T2,贵阳,kwe,100%,,https://flights.ctrip.com/schedule/hu1564.html
+6,金鹏航空,Y87564,22:05,安庆天柱山机场,安庆,aqg,None,00:40,贵阳龙洞堡国际机场T2,贵阳,kwe,100%,204,https://flights.ctrip.com/schedule/y87564.html
