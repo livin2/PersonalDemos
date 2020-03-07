@@ -10,8 +10,8 @@
 
 ```c
 :dir			//显示当前目录所有文件
-:q				//退出系统
-:/				//返回根目录
+:q			//退出系统
+:/			//返回根目录
 :open			//打开文件/目录 文件将读入到RAM
 :close			//关闭文件	会将文件从ram存回dev
 :back			//返回上一级目录 关闭当前文件夹
@@ -22,7 +22,7 @@
 :newFile		//在当前目录新建文件
 :deleteFile		//在当前目录删除文件
 :newFolder		//在当前目录新建文件夹
-:deleteFolder	//在当前目录删除文件夹		
+:deleteFolder	        //在当前目录删除文件夹		
 :devInfo		//输出设备信息到txt文件
 :ramInfo		//输出内存信息到txt文件
 ```
