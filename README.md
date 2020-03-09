@@ -1,4 +1,5 @@
 # AndroidMvpDemo-图床
+[![License](https://img.shields.io/badge/license-GPL-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 这是大三时作为软件工程课设和别人组队做的小项目，我负责客户端，另一人负责后端，还有一人做需求和测试。这个项目当时主要是为了尝试团队做敏捷开发，持续集成(做不到每天,每个周期集成交付一次)的流程。整个项目分三步走:
 
