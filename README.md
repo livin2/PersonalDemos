@@ -1,4 +1,5 @@
 # 虚拟文件系统
+ [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) 
 
 模拟了外存与内存两级硬件的文件系统，模拟实现了文件系统的数据块，文件索引结点，设备超级块等数据结构以及数据块的分配回收等底层操作。提供简单的CLI,提供了初级的文件增删、文件目录、文本编辑、写入权限控制等功能。
 
