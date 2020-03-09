@@ -1,5 +1,7 @@
 # HCIdemo-清明上河图
 
+ [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) 
+
 一个尝试各种屏幕交互的Android APP. 语音输入用了百度的sdk(源码里的key是百度官方demo的key).
 
 ## 使用展示
