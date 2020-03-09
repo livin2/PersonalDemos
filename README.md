@@ -1,4 +1,5 @@
 # 编译器Demo
+![MIT](https://img.shields.io/badge/license-MIT-green)
 
 涵盖词法分析器，语法分析器，四元式输出。
 
