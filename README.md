@@ -18,12 +18,12 @@
 
 ## 架构草图
 
-![](doc\struct.png)
+![doc\struct](https://s2.ax1x.com/2020/03/10/8PREIP.png)
 
 ## 截图
 
-![](doc\01.png)
+![doc\01](https://s2.ax1x.com/2020/03/10/8P2Tv4.png)
 
-![](doc\02.png)
+![doc\02](https://s2.ax1x.com/2020/03/10/8PRS2D.png)
 
-![](doc\03.png)
+![doc\03](https://s2.ax1x.com/2020/03/10/8PRCKH.png)
