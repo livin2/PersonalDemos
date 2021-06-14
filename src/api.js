@@ -4,8 +4,7 @@ export default{
      * @param {Object} routeNode 
      */
     onAddRoute:(routeNode)=>{
-        console.log('newroute:',routeNode.id);
-        console.log('newroute:',routeNode.label);
+        console.log('onAddRoute:',routeNode.label,routeNode.id);
     },
     /**
      * 两个路由直接建立连接
@@ -13,7 +12,16 @@ export default{
      * @param {Object} route2 
      */
     onLinkRoutes(route1,route2){
-        console.log('route1:',route1.label,route1.id);
-        console.log('route2:',route2.label,route2.id);
+        console.log('onLinkRoutes1:',route1.label,route1.id);
+        console.log('onLinkRoutes2:',route2.label,route2.id);
+    },
+    /**
+     * 两个路由直接连接断开
+     * @param {Object} route1 
+     * @param {Object} route2 
+     */
+     onDisconnect(route1,route2){
+        console.log('onDisconnect1:',route1.label,route1.id);
+        console.log('onDisconnect2:',route2.label,route2.id);
     }
 }

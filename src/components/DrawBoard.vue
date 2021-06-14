@@ -62,7 +62,7 @@ export default {
         if(!this.graph.isNeighbor(this.selectionStack[0],this.selectionStack[1]))
           this.canLink = true;
       }
-      console.warn(this.selectionStack)
+      console.info('onRouteSelected',this.selectionStack)
     },
     linkRoute(){
       let selected = this.graph.getSelectedCells();
@@ -99,6 +99,10 @@ export default {
     });
     this.graph.on('node:selected', ({node}) => this.onRouteSelected(node))
     this.graph.on('node:unselected',()=>this.graph.isSelectionEmpty()?this.selectionStack=[null,null]:'');
+    this.graph.on("edge:removed", ({ edge}) => {
+      api.onDisconnect(this.graph.getCellById(edge.getSourceCellId()),
+        this.graph.getCellById(edge.getTargetCellId()));
+    });
   },
 };
 </script>
