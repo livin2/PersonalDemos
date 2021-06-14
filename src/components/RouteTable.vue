@@ -1,9 +1,9 @@
 <template>
-  <a-affix
+  <div
     :offset-bottom="10"
     :style="{
       position: 'absolute',
-      bottom: '10px',
+      bottom: '2vh',
       left: '10px',
       'z-index': '999',
     }"
@@ -25,7 +25,7 @@
       </template>
       <a-button type="primary"> 路由表 </a-button>
     </a-popover>
-  </a-affix>
+  </div>
 </template>
 <script>
 const columns = [
