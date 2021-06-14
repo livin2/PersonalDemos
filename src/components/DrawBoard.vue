@@ -1,78 +1,103 @@
 <template>
+<div>
+  <a-affix :offset-top="10"
+     :style="{ position: 'absolute', top: '10px', right: '10px','z-index':'999'}">
+      <a-button type="primary" @click="addRoute">
+        添加节点
+      </a-button>
+      <a-button type="primary" style="margin-left:10px">
+        连接路由
+      </a-button>
+    </a-affix>
+<div id="main">
   <div id="container" ref="container"></div>
+</div>
+</div>
 </template>
 
 <script>
-import { Graph } from "@antv/x6";
+import { Graph} from "@antv/x6";
+import api from "../api"
 export default {
   name: "DrawBoard",
   props: {
     msg: String,
   },
+  data(){
+    return{
+      graph:null,
+      routeLabelSta:0,
+      selectionStack:[null,null],
+    }
+  },
+  methods:{
+    addRoute(){
+      let rcolor = Math.floor(Math.random()*16777215).toString(16);
+      const node = this.graph.addNode({
+        shape: 'rect', // 指定使用何种图形，默认值为 'rect'
+        x: 40,
+        y: 40,
+        width: 80,
+        height: 40,
+        label: `R${this.routeLabelSta}`,
+        attrs:{
+          body: {
+            fill:`#${rcolor}`  // 背景颜色
+          },
+        }
+      })
+      this.routeLabelSta++;
+      api.onAddRoute(node)
+    },
+    onRouteSelected(node){
+      let pre = this.selectionStack.shift();
+      console.warn(pre)
+      this.selectionStack.push(node)
+      if(pre) this.graph.unselect(pre);
+      console.warn(this.selectionStack)
+    }
+  },
   mounted() {
-    const data = {
-      // 节点
-      nodes: [
-        {
-          id: "route1", // String，可选，节点的唯一标识
-          x: 40, // Number，必选，节点位置的 x 值
-          y: 40, // Number，必选，节点位置的 y 值
-          width: 80, // Number，可选，节点大小的 width 值
-          height: 40, // Number，可选，节点大小的 height 值
-          label: "route1", // String，节点标签
-        },
-        {
-          id: "route2", // String，节点的唯一标识
-          x: 160, // Number，必选，节点位置的 x 值
-          y: 180, // Number，必选，节点位置的 y 值
-          width: 80, // Number，可选，节点大小的 width 值
-          height: 40, // Number，可选，节点大小的 height 值
-          label: "route2", // String，节点标签
-        },
-      ],
-      // 边
-      edges: [
-        {
-          source: "route1", // String，必须，起始节点 id
-          target: "route2", // String，必须，目标节点 id
-          attrs:{
-            line:{
-              stroke: "#7c68fc", 
-              targetMarker:''
-            }
-          }
-        },
-      ],
-    };
-
-    const graph = new Graph({
-      container: document.getElementById("container"),
-      width: 800,
-      height: 600,
+    this.graph = new Graph({
+      container: this.$refs.container,
+      autoResize:window.Docuemnt,
       grid: {
         size: 10, // 网格大小 10px
         visible: true, // 渲染网格背景
       },
+      selecting: {
+        enabled: true,
+        rubberband: true, // 启用框选
+        showNodeSelectionBox:true
+      },
     });
-    graph.fromJSON(data);
+    this.graph.on('node:selected', ({node}) => this.onRouteSelected(node))
+    this.graph.on('node:unselected',()=>this.graph.isSelectionEmpty()?this.selectionStack=[null,null]:'');
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-h3 {
-  margin: 40px 0 0;
+#main{
+  width:100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+#container{
+  height: auto;
+  flex: 1;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+::v-deep .x6-widget-selection-box{
+    // border:none;
+    margin: 0;
+    padding: 0;
+    box-shadow: 0px 0px 9px 4px #5498f1;
+    border: none;
 }
 </style>
