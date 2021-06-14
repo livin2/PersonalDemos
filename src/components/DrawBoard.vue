@@ -5,7 +5,9 @@
       <a-button type="primary" @click="addRoute">
         添加节点
       </a-button>
-      <a-button type="primary" style="margin-left:10px">
+      <a-button type="primary" style="margin-left:10px"
+        v-if='selectionStack[0] && selectionStack[1]&&canLink'
+        @click="linkRoute">
         连接路由
       </a-button>
     </a-affix>
@@ -26,6 +28,7 @@ export default {
   data(){
     return{
       graph:null,
+      canLink:false,
       routeLabelSta:0,
       selectionStack:[null,null],
     }
@@ -47,14 +50,36 @@ export default {
         }
       })
       this.routeLabelSta++;
+      // node['ConnectedRoutes'] = {}
+      // node.getRid = function(){return this.label} //OR return this.id
       api.onAddRoute(node)
     },
     onRouteSelected(node){
-      let pre = this.selectionStack.shift();
-      console.warn(pre)
       this.selectionStack.push(node)
+      let pre = this.selectionStack.shift();
       if(pre) this.graph.unselect(pre);
+      if(this.selectionStack[0] && this.selectionStack[1]){
+        if(!this.graph.isNeighbor(this.selectionStack[0],this.selectionStack[1]))
+          this.canLink = true;
+      }
       console.warn(this.selectionStack)
+    },
+    linkRoute(){
+      let selected = this.graph.getSelectedCells();
+      if(this.graph.isNeighbor(selected[0],selected[1]))return;
+      this.graph.addEdge({
+        shape: 'edge', // 指定使用何种图形，默认值为 'edge'
+        source: selected[0],
+        target: selected[1],
+        attrs:{
+          line:{targetMarker:''}
+        },
+        tools: {
+          name: 'button-remove',
+        },
+      })
+      this.canLink = false;
+      api.onLinkRoutes(selected[0],selected[1]);
     }
   },
   mounted() {
@@ -68,7 +93,8 @@ export default {
       selecting: {
         enabled: true,
         rubberband: true, // 启用框选
-        showNodeSelectionBox:true
+        showNodeSelectionBox:true,
+        filter: ['edge']
       },
     });
     this.graph.on('node:selected', ({node}) => this.onRouteSelected(node))
