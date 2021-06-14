@@ -13,13 +13,27 @@
       <a-button
         type="primary"
         style="margin-left: 10px"
+        @click="updateAllRoute"
+      >
+        RIP更新路由
+      </a-button>
+      <a-button
+        type="primary"
+        style="margin-left: 10px"
         v-if="selectionStack[0] && selectionStack[1] && canLink"
         @click="linkRoute"
       >
         连接路由
       </a-button>
+      <a-button
+        type="danger"
+        style="margin-left: 10px"
+        @click="test"
+      >
+        test
+      </a-button>
     </a-affix>
-    <RouteTable/>
+    <RouteTable ref='rtab' :data="currentRouteTable"/>
     <div id="main">
       <div id="container" ref="container"></div>
     </div>
@@ -48,6 +62,16 @@ export default {
     };
   },
   methods: {
+    updateAllRoute:api.startRIP,
+    test(){
+      let node = this.addRoute();
+      api.onRouteTableUpdate(node,[{
+        key:0,
+        to:'Rn',
+        dist:99,
+        next:'R5'
+      }])
+    },
     addRoute() {
       let rcolor = (
         (Math.floor(Math.random() * 128 + 127) << 16) |
@@ -71,6 +95,7 @@ export default {
       // node['ConnectedRoutes'] = {}
       // node.getRid = function(){return this.label} //OR return this.id
       api.onAddRoute(node);
+      return node;
     },
     onRouteSelected(node) {
       this.selectionStack.push(node);
@@ -127,6 +152,16 @@ export default {
         this.graph.getCellById(edge.getTargetCellId())
       );
     });
+    api.onRouteTableUpdateCBs=(route,routeTable)=>{
+      this.graph.cleanSelection();
+      this.$refs.rtab.visible = false;
+      this.currentRouteTable = routeTable;
+      if(route instanceof String)
+        route = this.graph.getCellById(route)
+      this.graph.select(route)
+      route.routeTable = routeTable;
+      this.$refs.rtab.visible = true;
+    };
   },
 };
 </script>

@@ -8,7 +8,7 @@
       'z-index': '999',
     }"
   >
-    <a-popover trigger="click" placement="topLeft">
+    <a-popover trigger="click" placement="topLeft" v-model="visible">
       <template slot="content">
         <a-table
           style="width: 30vw"
@@ -43,9 +43,9 @@ const columns = [
   },
 ];
 
-const data = [];
+const expdata = [];
 for (let i = 0; i < 100; i++) {
-  data.push({
+  expdata.push({
     key: i,
     to: `K${i}`,
     dist: 32,
@@ -55,10 +55,16 @@ for (let i = 0; i < 100; i++) {
 
 export default {
   name: "RouteTable",
+  props: {
+    data: {
+      type:Array,
+      default:()=>expdata
+    },
+  },
   data() {
     return {
-      data,
       columns,
+      visible:false,
     };
   },
 };
