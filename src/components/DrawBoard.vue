@@ -32,7 +32,7 @@ export default {
   },
   methods:{
     addRoute(){
-      let rcolor = Math.floor(Math.random()*16777215).toString(16);
+      let rcolor = (Math.floor(Math.random()*128+127)<<16|Math.floor(Math.random()*128+127)<<8|Math.floor(Math.random()*128+127)).toString(16);
       const node = this.graph.addNode({
         shape: 'rect', // 指定使用何种图形，默认值为 'rect'
         x: 40,
