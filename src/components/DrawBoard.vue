@@ -77,7 +77,6 @@ export default {
     };
   },
   methods: {
-    updateAllRoute:api.startRIP,
     test(){
       let node = this.addRoute();
       api.onRouteTableUpdate(node,[{
@@ -86,6 +85,12 @@ export default {
         dist:99,
         next:'R5'
       }])
+    },
+    updateAllRoute(){
+      let selected = this.graph.getSelectedCells();
+      let start = null;
+      if(selected.length>0) start = selected.pop();
+      api.startRIP(start);
     },
     addRoute() {
       let rcolor = (

@@ -28,9 +28,11 @@ export default {
   },
   /**
    * 触发RIP算法更新全网络路由表
+   * @param {Object} routeStart
    */
-  startRIP(){
-    
+  startRIP(routeStart=null){
+    let startLabel = routeStart?routeStart.label:'R0';
+    console.log('onStartRip:',startLabel); 
   },
   /**
    * 节点路由表更新后调用触发控件显示
