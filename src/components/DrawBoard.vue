@@ -21,7 +21,7 @@
         type="primary"
         style="margin-left: 10px"
         v-if="selectionStack[0] && selectionStack[1] && canLink"
-        @click="linkRoute"
+        @click="prelinkRoute"
       >
         连接路由
       </a-button>
@@ -33,6 +33,19 @@
         test
       </a-button>
     </a-affix>
+    <a-modal 
+      v-model="modalvisable" 
+      title="" 
+      @ok="linkRoute"
+      style="position:absolute;z-index:999">
+      请输入距离权重: 
+      <a-input-number
+        v-model='dist'
+        :min='1'
+        :max='1000'
+        :step='1'
+        />
+    </a-modal>
     <RouteTable ref='rtab' :data="currentRouteTable"/>
     <div id="main">
       <div id="container" ref="container"></div>
@@ -59,6 +72,8 @@ export default {
       canLink: false,
       routeLabelSta: 0,
       selectionStack: [null, null],
+      modalvisable:false,
+      dist:1,
     };
   },
   methods: {
@@ -109,13 +124,23 @@ export default {
       }
       console.info("onRouteSelected", this.selectionStack);
     },
+    prelinkRoute(){
+      let selected = this.graph.getSelectedCells();
+      if (this.graph.isNeighbor(selected[0], selected[1])) return console.info('linked');
+      this.modalvisable = true;
+
+    },
     linkRoute() {
       let selected = this.graph.getSelectedCells();
       if (this.graph.isNeighbor(selected[0], selected[1])) return;
+      this.modalvisable = false;
+      let tdist = this.dist;
+      this.dist = 1;
       this.graph.addEdge({
         shape: "edge", // 指定使用何种图形，默认值为 'edge'
         source: selected[0],
         target: selected[1],
+        label:`${tdist}`,
         attrs: {
           line: { targetMarker: "" },
         },
@@ -124,7 +149,7 @@ export default {
         },
       });
       this.canLink = false;
-      api.onLinkRoutes(selected[0], selected[1]);
+      api.onLinkRoutes(selected[0], selected[1],tdist);
     },
   },
   mounted() {

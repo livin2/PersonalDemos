@@ -10,10 +10,12 @@ export default {
    * 两个路由直接建立连接
    * @param {Object} route1
    * @param {Object} route2
+   * @param {Number} distance
    */
-  onLinkRoutes(route1, route2) {
+  onLinkRoutes(route1, route2, dist=1) {
     console.log("onLinkRoutes1:", route1.label, route1.id);
     console.log("onLinkRoutes2:", route2.label, route2.id);
+    console.log("onLink:Distance:",dist)
   },
   /**
    * 两个路由直接连接断开
