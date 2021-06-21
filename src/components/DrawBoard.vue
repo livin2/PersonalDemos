@@ -25,6 +25,14 @@
       >
         连接路由
       </a-button>
+      <a-button
+        type="danger"
+        style="margin-left: 10px"
+        v-if="!selectionStack[0] && selectionStack[1]"
+        @click="delRoute"
+      >
+        删除路由
+      </a-button>
       <!-- <a-button
         type="danger"
         style="margin-left: 10px"
@@ -117,6 +125,13 @@ export default {
       // node.getRid = function(){return this.label} //OR return this.id
       api.onAddRoute(node);
       return node;
+    },
+    delRoute(){
+      let node = this.selectionStack[1];
+      this.graph.getConnectedEdges(node).forEach(edge => {
+        this.graph.removeEdge(edge);
+      });
+      this.graph.removeNode(node);
     },
     onRouteSelected(node) {
       this.selectionStack.push(node);
