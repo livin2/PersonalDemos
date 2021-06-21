@@ -33,7 +33,8 @@
         test
       </a-button> -->
     </a-affix>
-    <a-modal 
+    <a-modal
+      v-if="false"
       v-model="modalvisable" 
       title="" 
       @ok="linkRoute"
