@@ -25,13 +25,13 @@
       >
         连接路由
       </a-button>
-      <a-button
+      <!-- <a-button
         type="danger"
         style="margin-left: 10px"
         @click="test"
       >
         test
-      </a-button>
+      </a-button> -->
     </a-affix>
     <a-modal 
       v-model="modalvisable" 
@@ -93,6 +93,7 @@ export default {
       api.startRIP(start);
     },
     addRoute() {
+      if(this.routeLabelSta==10) return console.error('节点数不能超过10');
       let rcolor = (
         (Math.floor(Math.random() * 128 + 127) << 16) |
         (Math.floor(Math.random() * 128 + 127) << 8) |
@@ -158,6 +159,11 @@ export default {
     },
   },
   mounted() {
+    this.$notification.open({
+        message: 'F12进入控制台查看日志',
+        description:'请使用Chrome/Edge浏览器打开',
+        duration: 60,
+      });
     this.graph = new Graph({
       container: this.$refs.container,
       autoResize: window.Docuemnt,
