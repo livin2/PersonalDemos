@@ -34,7 +34,6 @@
       </a-button> -->
     </a-affix>
     <a-modal
-      v-if="false"
       v-model="modalvisable" 
       title="" 
       @ok="linkRoute"
@@ -47,7 +46,7 @@
         :step='1'
         />
     </a-modal>
-    <RouteTable ref='rtab' :data="currentRouteTable"/>
+    <RouteTable v-if="false" ref='rtab' :data="currentRouteTable"/>
     <div id="main">
       <div id="container" ref="container"></div>
     </div>
