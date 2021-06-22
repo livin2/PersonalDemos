@@ -13,10 +13,16 @@
       <a-button
         type="primary"
         style="margin-left: 10px"
+        v-if="stepQueue.length<=0"
         @click="updateAllRoute"
       >
         RIP更新路由
       </a-button>
+      <a-button-group v-if="stepQueue.length" style="margin-left: 10px">
+        <!-- <a-button type="primary" icon="step-backward"/> -->
+        <a-button type="" icon="step-forward"/>
+        <a-button type="danger" icon="logout"/>
+      </a-button-group>
       <a-button
         type="primary"
         style="margin-left: 10px"
@@ -28,7 +34,7 @@
       <a-button
         type="danger"
         style="margin-left: 10px"
-        v-if="!selectionStack[0] && selectionStack[1]"
+        v-if="!selectionStack[0] && selectionStack[1] && stepQueue.length<=0"
         @click="delRoute"
       >
         删除路由
@@ -54,7 +60,7 @@
         :step='1'
         />
     </a-modal>
-    <RouteTable v-if="false" ref='rtab' :data="currentRouteTable"/>
+    <RouteTable ref='rtab' :data="currentRouteTable"/>
     <div id="main">
       <div id="container" ref="container"></div>
     </div>
@@ -65,6 +71,20 @@
 import { Graph } from "@antv/x6";
 import RouteTable from './RouteTable.vue'
 import api from "../api";
+/**
+  *   @argument {Number} key 索引
+  *   @argument {String} to 目标
+  *   @argument {Number} dist 距离
+  *   @argument {String} next 下一跳
+ */
+class rtItem {
+  constructor(key,to,dist,next) {
+    this.key = key;
+    this.to = to;
+    this.dist = dist;
+    this.next = next;
+  }
+}
 export default {
   name: "DrawBoard",
   components: {
@@ -82,6 +102,7 @@ export default {
       selectionStack: [null, null],
       modalvisable:false,
       dist:1,
+      stepQueue:[],
     };
   },
   methods: {
@@ -94,11 +115,36 @@ export default {
         next:'R5'
       }])
     },
+    StepDvAlgorithm(){
+      this.graph.cleanSelection();
+      this.$refs.rtab.visible = false;
+
+      let [from,route] = this.stepQueue.shift();
+      this.graph.select(route);
+      this.currentRouteTable = Object.values(route['routeTables']).map(x=>({
+        ...x,
+        to: x.to.label,
+        next: x.next.label,
+      }));
+      //TODO UPDATE RouteTable
+      
+      // route.routeTable = routeTable;
+      console.log(from)
+      this.$refs.rtab.visible = true;
+    },
+    updateQueue(from){
+      this.stepQueue = 
+          this.stepQueue.concat(this.graph.getNeighbors(from).map(x=>[from,x]));
+    },
     updateAllRoute(){
       let selected = this.graph.getSelectedCells();
-      let start = null;
+      let start = this.graph.getNodes()[0];
       if(selected.length>0) start = selected.pop();
-      api.startRIP(start);
+      console.log(this.graph.getNeighbors(start));
+      this.updateQueue(start);
+      this.StepDvAlgorithm();
+      return start;
+      // api.startRIP(start);
     },
     addRoute() {
       if(this.routeLabelSta==10) return console.error('节点数不能超过10');
@@ -124,6 +170,7 @@ export default {
       // node['ConnectedRoutes'] = {}
       // node.getRid = function(){return this.label} //OR return this.id
       api.onAddRoute(node);
+      node['routeTables'] = {};
       return node;
     },
     delRoute(){
@@ -142,6 +189,11 @@ export default {
           !this.graph.isNeighbor(this.selectionStack[0], this.selectionStack[1])
         )
           this.canLink = true;
+
+        // console.log(555,
+        //   this.selectionStack[0],
+        //   this.selectionStack[1],
+        //   this.graph.isNeighbor(this.selectionStack[0], this.selectionStack[1]));
       }
       console.info("onRouteSelected", this.selectionStack);
     },
@@ -150,6 +202,10 @@ export default {
       if (this.graph.isNeighbor(selected[0], selected[1])) return console.info('linked');
       this.modalvisable = true;
 
+    },
+    updateRouteTable(f,t,d,n){
+      let rt = f['routeTables'];
+      rt[t.id] = new rtItem(f.length,t,d,n);
     },
     linkRoute() {
       let selected = this.graph.getSelectedCells();
@@ -171,6 +227,8 @@ export default {
       });
       this.canLink = false;
       api.onLinkRoutes(selected[0], selected[1],tdist);
+      this.updateRouteTable(selected[0],selected[1],tdist,selected[1]);
+      this.updateRouteTable(selected[1],selected[0],tdist,selected[0]);
     },
   },
   mounted() {
@@ -198,10 +256,11 @@ export default {
       this.graph.isSelectionEmpty() ? (this.selectionStack = [null, null]) : ""
     );
     this.graph.on("edge:removed", ({ edge }) => {
-      api.onDisconnect(
-        this.graph.getCellById(edge.getSourceCellId()),
-        this.graph.getCellById(edge.getTargetCellId())
-      );
+      let fnode = this.graph.getCellById(edge.getSourceCellId());
+      let tnode = this.graph.getCellById(edge.getTargetCellId());
+      delete fnode['routeTables'][tnode.id]; 
+      delete tnode['routeTables'][fnode.id];
+      api.onDisconnect(fnode,tnode);
     });
     api.onRouteTableUpdateCBs=(route,routeTable)=>{
       this.graph.cleanSelection();
