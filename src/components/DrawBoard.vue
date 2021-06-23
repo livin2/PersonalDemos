@@ -20,8 +20,10 @@
       </a-button>
       <a-button-group v-if="stepQueue.length" style="margin-left: 10px">
         <!-- <a-button type="primary" icon="step-backward"/> -->
-        <a-button type="" icon="step-forward"/>
-        <a-button type="danger" icon="logout"/>
+        <a-button type="" icon="step-forward" @click="StepForward">
+          {{stepT}}
+        </a-button>
+        <a-button type="danger" icon="logout" @click="Stop"/>
       </a-button-group>
       <a-button
         type="primary"
@@ -73,9 +75,9 @@ import RouteTable from './RouteTable.vue'
 import api from "../api";
 /**
   *   @argument {Number} key 索引
-  *   @argument {String} to 目标
+  *   @argument {RouteRef} to 目标
   *   @argument {Number} dist 距离
-  *   @argument {String} next 下一跳
+  *   @argument {RouteRef} next 下一跳
  */
 class rtItem {
   constructor(key,to,dist,next) {
@@ -84,7 +86,16 @@ class rtItem {
     this.dist = dist;
     this.next = next;
   }
+  clone(){
+    return new rtItem(this.key,this.to,this.dist,this.next);
+  }
 }
+const RTadapter = (route)=>
+  Object.values(route['routeTables']).map(x=>({
+      ...x,
+      to: x.to.label,
+      next: x.next.label,
+  }));
 export default {
   name: "DrawBoard",
   components: {
@@ -103,6 +114,10 @@ export default {
       modalvisable:false,
       dist:1,
       stepQueue:[],
+      backStack:[],
+      unreachable:16,
+      stepOnBegin:true,
+      stepT:'跳转'
     };
   },
   methods: {
@@ -115,39 +130,105 @@ export default {
         next:'R5'
       }])
     },
-    StepDvAlgorithm(){
+    Stop(){
       this.graph.cleanSelection();
-      this.$refs.rtab.visible = false;
-
-      let [from,route] = this.stepQueue.shift();
-      this.graph.select(route);
-      this.currentRouteTable = Object.values(route['routeTables']).map(x=>({
-        ...x,
-        to: x.to.label,
-        next: x.next.label,
-      }));
+      this.stepQueue = [];
+      this.backStack = [];
+    },
+    StepForward(){
+      if(!this.stepQueue.length) return console.warn('NO CHANGE');
+      if(this.stepOnBegin){
+        this.graph.cleanSelection();
+        this.$refs.rtab.visible = false;
+        let route = this.stepQueue[0][1];
+        this.graph.select(route);
+        this.currentRouteTable = RTadapter(route);
+        this.$refs.rtab.visible = true;
+        this.stepT = '更新'
+        this.stepOnBegin = false;
+      }else{
+        this.StepDvAlgorithm();
+        this.stepT = '跳转'
+        this.stepOnBegin = true;
+      }
+    },
+    StepDvAlgorithm(){
+      let [from,route] = this.stepQueue.shift(); //from:the route send RouteTable
+      console.info('-----------------------------------------')
+      console.info(`更新路由表：${from.label} => ${route.label}`)
+      console.info(`${route.label}更新前：`)
+      console.table(JSON.parse(JSON.stringify(this.currentRouteTable)));
       //TODO UPDATE RouteTable
-      
-      // route.routeTable = routeTable;
-      console.log(from)
+      this.backStack.push([route,JSON.stringify(route['routeTables'])]);
+      for(let tid in from['routeTables']){
+        if(tid == route.id) continue;
+        let ndist = from['routeTables'][tid].dist + route['routeTables'][from.id].dist;
+
+        if(tid in route['routeTables']){
+          
+          if(from['routeTables'][tid].dist >= this.unreachable &&
+            route['routeTables'][tid].next == from.id){
+              route['routeTables'][tid].dist = this.unreachable;
+              route['rTableDirty'] = true;
+          }
+          
+          if(ndist< route['routeTables'][tid].dist){
+            route['routeTables'][tid].next = from;
+            route['routeTables'][tid].dist = ndist;
+            route['rTableDirty'] = true;
+          }
+
+        }else{
+          this.addRouteTableItem(route,from['routeTables'][tid].to,ndist,from)
+          route['rTableDirty'] = true;
+        }
+      }
+      this.currentRouteTable = RTadapter(route);
+      if(route['rTableDirty']){
+        // this.$message.success(route.label+'路由表已更新');
+        this.$notification.success({
+          message: route.label+'路由表已更新',
+          description:'接受来自'+from.label+'的路由表',
+          placement:'bottomRight',
+        });
+        console.info(`${route.label}更新后：`)
+        console.table(JSON.parse(JSON.stringify(this.currentRouteTable)));
+      }
+      else{
+        // this.$message.info(route.label+'路由表无改动');
+        this.$notification.info({
+          message: route.label+'路由表无改动',
+          description:'接受来自'+from.label+'的路由表',
+          placement:'bottomRight',
+        });
+        console.info(`${route.label}路由表无更新`);
+      }
+      console.info('-----------------------------------------');
+      this.updateQueue(route);
       this.$refs.rtab.visible = true;
+      // route.routeTable = routeTable;
+      // console.log(from);
     },
     updateQueue(from){
+      if(!from['rTableDirty']) return;
       this.stepQueue = 
           this.stepQueue.concat(this.graph.getNeighbors(from).map(x=>[from,x]));
+      from['rTableDirty'] = false;
     },
     updateAllRoute(){
+      this.backStack = [];
+      this.stepQueue = [];
       let selected = this.graph.getSelectedCells();
       let start = this.graph.getNodes()[0];
       if(selected.length>0) start = selected.pop();
-      console.log(this.graph.getNeighbors(start));
+      // console.log(this.graph.getNeighbors(start));
       this.updateQueue(start);
-      this.StepDvAlgorithm();
+      this.StepForward();
       return start;
       // api.startRIP(start);
     },
     addRoute() {
-      if(this.routeLabelSta==10) return console.error('节点数不能超过10');
+      // if(this.routeLabelSta==10) return console.error('节点数不能超过10');
       let rcolor = (
         (Math.floor(Math.random() * 128 + 127) << 16) |
         (Math.floor(Math.random() * 128 + 127) << 8) |
@@ -195,7 +276,7 @@ export default {
         //   this.selectionStack[1],
         //   this.graph.isNeighbor(this.selectionStack[0], this.selectionStack[1]));
       }
-      console.info("onRouteSelected", this.selectionStack);
+      // console.log("onRouteSelected", this.selectionStack);
     },
     prelinkRoute(){
       let selected = this.graph.getSelectedCells();
@@ -203,9 +284,10 @@ export default {
       this.modalvisable = true;
 
     },
-    updateRouteTable(f,t,d,n){
+    addRouteTableItem(f,t,d,n){
       let rt = f['routeTables'];
-      rt[t.id] = new rtItem(f.length,t,d,n);
+      rt[t.id] = new rtItem(Object.keys(rt).length,t,d,n);
+      f['rTableDirty'] = true;
     },
     linkRoute() {
       let selected = this.graph.getSelectedCells();
@@ -227,8 +309,8 @@ export default {
       });
       this.canLink = false;
       api.onLinkRoutes(selected[0], selected[1],tdist);
-      this.updateRouteTable(selected[0],selected[1],tdist,selected[1]);
-      this.updateRouteTable(selected[1],selected[0],tdist,selected[0]);
+      this.addRouteTableItem(selected[0],selected[1],tdist,selected[1]);
+      this.addRouteTableItem(selected[1],selected[0],tdist,selected[0]);
     },
   },
   mounted() {
@@ -258,20 +340,22 @@ export default {
     this.graph.on("edge:removed", ({ edge }) => {
       let fnode = this.graph.getCellById(edge.getSourceCellId());
       let tnode = this.graph.getCellById(edge.getTargetCellId());
-      delete fnode['routeTables'][tnode.id]; 
-      delete tnode['routeTables'][fnode.id];
+      // delete fnode['routeTables'][tnode.id]; 
+      // delete tnode['routeTables'][fnode.id];
+      fnode['routeTables'][tnode.id].dist = this.unreachable;
+      tnode['routeTables'][fnode.id].dist = this.unreachable;
       api.onDisconnect(fnode,tnode);
     });
-    api.onRouteTableUpdateCBs=(route,routeTable)=>{
-      this.graph.cleanSelection();
-      this.$refs.rtab.visible = false;
-      this.currentRouteTable = routeTable;
-      if(route instanceof String)
-        route = this.graph.getCellById(route)
-      this.graph.select(route)
-      route.routeTable = routeTable;
-      this.$refs.rtab.visible = true;
-    };
+    // api.onRouteTableUpdateCBs=(route,routeTable)=>{
+    //   this.graph.cleanSelection();
+    //   this.$refs.rtab.visible = false;
+    //   this.currentRouteTable = routeTable;
+    //   if(route instanceof String)
+    //     route = this.graph.getCellById(route)
+    //   this.graph.select(route)
+    //   route.routeTable = routeTable;
+    //   this.$refs.rtab.visible = true;
+    // };
   },
 };
 </script>

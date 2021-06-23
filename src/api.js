@@ -272,9 +272,9 @@ export default {
    * @param {Object} routeNode
    */
   onAddRoute: (routeNode) => {
-    console.log("onAddRoute:", routeNode.label);
+    console.info("新增路由:", routeNode.label);
     // 节点自增
-    onNodeAdd();
+    // onNodeAdd();
   },
   /**
    * 两个路由直接建立连接
@@ -283,11 +283,11 @@ export default {
    * @param {Number} distance
    */
   onLinkRoutes(route1, route2, dist=1) {
-    console.log("onLinkRoutes1:", route1.label);
-    console.log("onLinkRoutes2:", route2.label);
+    console.info(`连接路由:${route1.label} <---> ${route2.label}`);
+    return dist
     // 参数为数组下表
-    updateNodeLink(Number(route1.label.slice(1)),
-      Number(route2.label.slice(1)),dist);
+    // updateNodeLink(Number(route1.label.slice(1)),
+    //   Number(route2.label.slice(1)),dist);
   },
   /**
    * 两个路由直接连接断开
@@ -295,16 +295,15 @@ export default {
    * @param {Object} route2
    */
   onDisconnect(route1, route2) {
-    console.log("onDisconnect1:", route1.label, route1.id);
-    console.log("onDisconnect2:", route2.label, route2.id);
+    console.info(`断开路由:${route1.label} <-x-> ${route2.label}`);
     // 参数为数组下表
-    onNodeDisconnect(Number(route1.label.slice(1)),Number(route2.label.slice(1)));
+    // onNodeDisconnect(Number(route1.label.slice(1)),Number(route2.label.slice(1)));
   },
   /**
    * 触发RIP算法更新全网络路由表
    */
   startRIP() {
-    printRouter();
+    // printRouter();
   },
   /**
    * 节点路由表更新后调用触发控件显示
@@ -318,7 +317,8 @@ export default {
    */
   onRouteTableUpdateCB: () => { },//Implement After Vue mounted,
   onRouteTableUpdate(route, routeTable) {
-    this.onRouteTableUpdateCBs(route, routeTable);
+    return route,routeTable
+    // this.onRouteTableUpdateCBs(route, routeTable);
   },
 
 };
