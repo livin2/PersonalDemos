@@ -19,8 +19,8 @@
         RIP更新路由
       </a-button>
       <a-button-group v-if="stepQueue.length" style="margin-left: 10px">
-        <a-button type="primary" :disabled="!backStack.length" icon="step-backward" @click="StepBackward" />
-        <a-button type="" icon="step-forward" @click="StepForward">
+        <a-button type="primary" :disabled="!backStack.length || isRunning" icon="step-backward" @click="StepBackward" />
+        <a-button type="" :disabled='isRunning' icon="step-forward" @click="StepForward">
           {{stepT}}
         </a-button>
         <a-button type="primary" icon="fast-forward" @click="FastForward" />
@@ -118,7 +118,8 @@ export default {
       backStack:[],
       unreachable:16,
       stepOnBegin:true,
-      stepT:'运行下一步'
+      stepT:'运行下一步',
+      isRunning:false,
     };
   },
   methods: {
@@ -138,11 +139,14 @@ export default {
     },
     FastForward(){
       if(this.stepQueue.length>0){
+        this.isRunning = true;
         setTimeout(() => {
           this.StepForward();
           // console.log(this.stepQueue)
           this.FastForward();
         }, 666);
+      }else{
+        this.isRunning = false;
       }
     },
     StepBackward(){
@@ -208,16 +212,17 @@ export default {
 
         if(tid in route['routeTables']){
           
-          if(from['routeTables'][tid].dist >= this.unreachable &&
+          if(from['routeTables'][tid].dist > this.unreachable &&
             route['routeTables'][tid].next.id == from.id){
               route['routeTables'][tid].dist = this.unreachable;
               isChange = true;
+              continue;
           }
           
           if(ndist< route['routeTables'][tid].dist || 
-              route['routeTables'][tid].next.id == from.id
+              (route['routeTables'][tid].next.id == from.id
               &&route['routeTables'][tid].dist!=ndist
-              &&route['routeTables'][tid].dist<=this.unreachable){
+              &&route['routeTables'][tid].dist<this.unreachable)){
             route['routeTables'][tid].next = from;
             route['routeTables'][tid].dist = ndist;
             isChange = true;
