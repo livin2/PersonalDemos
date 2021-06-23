@@ -23,6 +23,7 @@
         <a-button type="" icon="step-forward" @click="StepForward">
           {{stepT}}
         </a-button>
+        <a-button type="primary" icon="fast-forward" @click="FastForward" />
         <a-button type="danger" icon="logout" @click="Stop"/>
       </a-button-group>
       <a-button
@@ -135,6 +136,15 @@ export default {
       this.stepQueue = [];
       this.backStack = [];
     },
+    FastForward(){
+      if(this.stepQueue.length>0){
+        setTimeout(() => {
+          this.StepForward();
+          // console.log(this.stepQueue)
+          this.FastForward();
+        }, 666);
+      }
+    },
     StepBackward(){
       if(!this.backStack.length) return console.warn('NO CHANGE');
       if(this.stepOnBegin){ //刚更新完
@@ -199,12 +209,15 @@ export default {
         if(tid in route['routeTables']){
           
           if(from['routeTables'][tid].dist >= this.unreachable &&
-            route['routeTables'][tid].next == from.id){
+            route['routeTables'][tid].next.id == from.id){
               route['routeTables'][tid].dist = this.unreachable;
               isChange = true;
           }
           
-          if(ndist< route['routeTables'][tid].dist){
+          if(ndist< route['routeTables'][tid].dist || 
+              route['routeTables'][tid].next.id == from.id
+              &&route['routeTables'][tid].dist!=ndist
+              &&route['routeTables'][tid].dist<=this.unreachable){
             route['routeTables'][tid].next = from;
             route['routeTables'][tid].dist = ndist;
             isChange = true;
@@ -257,6 +270,7 @@ export default {
       let start = this.graph.getNodes()[0];
       if(selected.length>0) start = selected.pop();
       // console.log(this.graph.getNeighbors(start));
+      start['rTableDirty'] = true;
       this.updateQueue(start);
       this.$refs.rtab.visible = true;
       // this.StepForward();
@@ -383,6 +397,8 @@ export default {
       // delete tnode['routeTables'][fnode.id];
       fnode['routeTables'][tnode.id].dist = this.unreachable;
       tnode['routeTables'][fnode.id].dist = this.unreachable;
+      fnode['rTableDirty'] = true;
+      tnode['rTableDirty'] = true;
       api.onDisconnect(fnode,tnode);
     });
     // api.onRouteTableUpdateCBs=(route,routeTable)=>{
