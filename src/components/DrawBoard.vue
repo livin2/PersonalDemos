@@ -9,7 +9,7 @@
         'z-index': '999',
       }"
     >
-      <a-button type="primary" @click="addRoute"> 添加节点 </a-button>
+      <a-button type="primary" @click="addRoute" v-if="!stepQueue.length"> 添加节点 </a-button>
       <a-button
         type="primary"
         style="margin-left: 10px"
@@ -19,7 +19,7 @@
         RIP更新路由
       </a-button>
       <a-button-group v-if="stepQueue.length" style="margin-left: 10px">
-        <a-button type="primary" v-if="backStack.length" icon="step-backward" @click="StepBackward" />
+        <a-button type="primary" :disabled="!backStack.length" icon="step-backward" @click="StepBackward" />
         <a-button type="" icon="step-forward" @click="StepForward">
           {{stepT}}
         </a-button>
@@ -36,7 +36,7 @@
       <a-button
         type="danger"
         style="margin-left: 10px"
-        v-if="!selectionStack[0] && selectionStack[1] && stepQueue.length<=0"
+        v-if="!stepQueue.length && !selectionStack[0] && selectionStack[1]"
         @click="delRoute"
       >
         删除路由
@@ -116,8 +116,8 @@ export default {
       stepQueue:[],
       backStack:[],
       unreachable:16,
-      stepOnBegin:false,
-      stepT:'下一步'
+      stepOnBegin:true,
+      stepT:'运行下一步'
     };
   },
   methods: {
@@ -144,14 +144,14 @@ export default {
         this.currentRouteTable = RTadapter(route);
         console.info('-----------------------------------------')
         console.info(`回退路由表更新：${from.label} => ${route.label}`)
-        console.table(JSON.parse(JSON.stringify(this.currentRouteTable)));
+              console.table(JSON.parse(JSON.stringify(this.currentRouteTable)),['to','dist','next']);
         this.$notification.warning({
           message: route.label+'回退路由表更新',
           description:'接受来自'+from.label+'路由表的更新',
           placement:'bottomRight',
         });
 
-        this.stepT = '更新'
+        this.stepT = '更新路由表'
         this.stepOnBegin = false;
         // console.info('-----------------------------------------')
       }else{
@@ -162,7 +162,7 @@ export default {
         this.currentRouteTable = RTadapter(route);
         this.$refs.rtab.visible = true;
 
-        this.stepT = '下一步'
+        this.stepT = '运行下一步'
         this.stepOnBegin = true;
       }
     },
@@ -175,11 +175,11 @@ export default {
         this.graph.select(route);
         this.currentRouteTable = RTadapter(route);
         this.$refs.rtab.visible = true;
-        this.stepT = '更新'
+        this.stepT = '更新路由表'
         this.stepOnBegin = false;
       }else{
         this.StepDvAlgorithm();
-        this.stepT = '跳转'
+        this.stepT = '运行下一步'
         this.stepOnBegin = true;
       }
     },
@@ -188,9 +188,10 @@ export default {
       console.info('-----------------------------------------')
       console.info(`更新路由表：${from.label} => ${route.label}`)
       console.info(`${route.label}更新前：`)
-      console.table(JSON.parse(JSON.stringify(this.currentRouteTable)));
+      console.table(JSON.parse(JSON.stringify(this.currentRouteTable)),['to','dist','next']);
       //TODO UPDATE RouteTable
       this.backStack.push([from,route,{...route['routeTables']}]);
+      let isChange = false; //rTableDirty会被节点添加影响
       for(let tid in from['routeTables']){
         if(tid == route.id) continue;
         let ndist = from['routeTables'][tid].dist + route['routeTables'][from.id].dist;
@@ -200,22 +201,24 @@ export default {
           if(from['routeTables'][tid].dist >= this.unreachable &&
             route['routeTables'][tid].next == from.id){
               route['routeTables'][tid].dist = this.unreachable;
-              route['rTableDirty'] = true;
+              isChange = true;
           }
           
           if(ndist< route['routeTables'][tid].dist){
             route['routeTables'][tid].next = from;
             route['routeTables'][tid].dist = ndist;
-            route['rTableDirty'] = true;
+            isChange = true;
           }
 
         }else{
           this.addRouteTableItem(route,from['routeTables'][tid].to,ndist,from)
-          route['rTableDirty'] = true;
+          isChange = true;
         }
       }
+      
       this.currentRouteTable = RTadapter(route);
-      if(route['rTableDirty']){
+      if(isChange){
+        route['rTableDirty'] = true;
         // this.$message.success(route.label+'路由表已更新');
         this.$notification.success({
           message: route.label+'路由表已更新',
@@ -223,7 +226,7 @@ export default {
           placement:'bottomRight',
         });
         console.info(`${route.label}更新后：`)
-        console.table(JSON.parse(JSON.stringify(this.currentRouteTable)));
+        console.table(JSON.parse(JSON.stringify(this.currentRouteTable)),['to','dist','next']);
       }
       else{
         // this.$message.info(route.label+'路由表无改动');
@@ -255,7 +258,8 @@ export default {
       if(selected.length>0) start = selected.pop();
       // console.log(this.graph.getNeighbors(start));
       this.updateQueue(start);
-      this.StepForward();
+      this.$refs.rtab.visible = true;
+      // this.StepForward();
       return start;
       // api.startRIP(start);
     },
