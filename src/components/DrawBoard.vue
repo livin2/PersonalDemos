@@ -19,7 +19,7 @@
         RIP更新路由
       </a-button>
       <a-button-group v-if="stepQueue.length" style="margin-left: 10px">
-        <!-- <a-button type="primary" icon="step-backward"/> -->
+        <a-button type="primary" v-if="backStack.length" icon="step-backward" @click="StepBackward" />
         <a-button type="" icon="step-forward" @click="StepForward">
           {{stepT}}
         </a-button>
@@ -58,7 +58,7 @@
       <a-input-number
         v-model='dist'
         :min='1'
-        :max='1000'
+        :max='16'
         :step='1'
         />
     </a-modal>
@@ -116,8 +116,8 @@ export default {
       stepQueue:[],
       backStack:[],
       unreachable:16,
-      stepOnBegin:true,
-      stepT:'跳转'
+      stepOnBegin:false,
+      stepT:'下一步'
     };
   },
   methods: {
@@ -134,6 +134,37 @@ export default {
       this.graph.cleanSelection();
       this.stepQueue = [];
       this.backStack = [];
+    },
+    StepBackward(){
+      if(!this.backStack.length) return console.warn('NO CHANGE');
+      if(this.stepOnBegin){ //刚更新完
+        let [from,route,routeT] = this.backStack.pop();
+        console.log(777,routeT)
+        route['routeTables'] = routeT;
+        this.currentRouteTable = RTadapter(route);
+        console.info('-----------------------------------------')
+        console.info(`回退路由表更新：${from.label} => ${route.label}`)
+        console.table(JSON.parse(JSON.stringify(this.currentRouteTable)));
+        this.$notification.warning({
+          message: route.label+'回退路由表更新',
+          description:'接受来自'+from.label+'路由表的更新',
+          placement:'bottomRight',
+        });
+
+        this.stepT = '更新'
+        this.stepOnBegin = false;
+        // console.info('-----------------------------------------')
+      }else{
+        this.graph.cleanSelection();
+        this.$refs.rtab.visible = false;
+        let route = this.backStack[this.backStack.length - 1][1];
+        this.graph.select(route);
+        this.currentRouteTable = RTadapter(route);
+        this.$refs.rtab.visible = true;
+
+        this.stepT = '下一步'
+        this.stepOnBegin = true;
+      }
     },
     StepForward(){
       if(!this.stepQueue.length) return console.warn('NO CHANGE');
@@ -159,7 +190,7 @@ export default {
       console.info(`${route.label}更新前：`)
       console.table(JSON.parse(JSON.stringify(this.currentRouteTable)));
       //TODO UPDATE RouteTable
-      this.backStack.push([route,JSON.stringify(route['routeTables'])]);
+      this.backStack.push([from,route,{...route['routeTables']}]);
       for(let tid in from['routeTables']){
         if(tid == route.id) continue;
         let ndist = from['routeTables'][tid].dist + route['routeTables'][from.id].dist;
@@ -202,8 +233,9 @@ export default {
           placement:'bottomRight',
         });
         console.info(`${route.label}路由表无更新`);
+        this.backStack.pop();
       }
-      console.info('-----------------------------------------');
+      // console.info('-----------------------------------------');
       this.updateQueue(route);
       this.$refs.rtab.visible = true;
       // route.routeTable = routeTable;
@@ -262,6 +294,9 @@ export default {
       this.graph.removeNode(node);
     },
     onRouteSelected(node) {
+      if(this.graph.getSelectedCells().length == 1){
+        this.currentRouteTable = RTadapter(node);
+      }
       this.selectionStack.push(node);
       let pre = this.selectionStack.shift();
       if (pre) this.graph.unselect(pre);
