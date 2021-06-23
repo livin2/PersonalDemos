@@ -139,7 +139,7 @@ export default {
       if(!this.backStack.length) return console.warn('NO CHANGE');
       if(this.stepOnBegin){ //刚更新完
         let [from,route,routeT] = this.backStack.pop();
-        console.log(777,routeT)
+        // console.log(777,routeT)
         route['routeTables'] = routeT;
         this.currentRouteTable = RTadapter(route);
         console.info('-----------------------------------------')
