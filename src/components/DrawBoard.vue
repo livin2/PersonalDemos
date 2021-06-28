@@ -16,7 +16,7 @@
         v-if="stepQueue.length<=0"
         @click="updateAllRoute"
       >
-        RIP更新路由
+        该节点发出RIP报文
       </a-button>
       <a-button-group v-if="stepQueue.length" style="margin-left: 10px">
         <a-button type="primary" :disabled="!backStack.length || isRunning" icon="step-backward" @click="StepBackward" />
