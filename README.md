@@ -1,6 +1,6 @@
 # rip-network-visualization
 
-RIP路由协议可视化
+[路由信息协议](https://en.wikipedia.org/wiki/Routing_Information_Protocol)可视化
 
 ## Project setup
 ```
